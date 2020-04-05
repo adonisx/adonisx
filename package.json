@@ -6,8 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Özgür Adem Işıklı <i.ozguradem@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "adonis",
+    "api",
+    "rest"
+  ],
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
     "@adonisjs/framework": "^5.0.13",
