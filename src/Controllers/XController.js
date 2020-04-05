@@ -3,7 +3,7 @@
 const RouteHelper = use('RouteHelper')
 const { capitalCase, snakeCase } = use('change-case')
 const Validation = use('Validation')
-const HttpException = use('App/Exceptions/HttpException')
+const HttpException = use('APIX/Exceptions/HttpException')
 const Route = use('Route')
 
 class XController {
