@@ -1,4 +1,6 @@
 const { ServiceProvider } = require('@adonisjs/fold')
+const { hooks } = require('@adonisjs/ignitor')
+const pluralize = use('pluralize')
 
 class ApiXProvider extends ServiceProvider {
   register () {
@@ -9,6 +11,7 @@ class ApiXProvider extends ServiceProvider {
     this._bind('APIX/Exceptions/HttpException', '../src/Exceptions/HttpException')
     this._bind('APIX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
 
+    this._bind('APIX/Helpers/ModelResolver', '../src/Helpers/ModelResolver')
     this._bind('APIX/Helpers/RouteHelper', '../src/Helpers/RouteHelper')
     this._bind('APIX/Helpers/ValidationHelper', '../src/Helpers/ValidationHelper')
 
@@ -24,6 +27,74 @@ class ApiXProvider extends ServiceProvider {
       const RouteHelper = use('APIX/Helpers/RouteHelper')
       return new RouteHelper()
     })
+
+    // Alias
+    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+
+    hooks.after.providersBooted(this._afterProvidersBooted)
+  }
+
+  _afterProvidersBooted () {
+    console.log('_afterProvidersBooted')
+    const Route = use('Route')
+    const RouteHelper = use('RouteHelper')
+    const ModelResolver = use('APIX/Helpers/ModelResolver')
+    
+    JSON.clone = (data) => {
+      return JSON.parse(JSON.stringify(data))
+    }
+    
+    const resolver = new ModelResolver()
+    const tree = resolver.get()
+    
+    const createRoutes = (parentUrl, parentModel, model) => {
+      // We are deciding the sub resource name
+      let resource = pluralize
+        .plural(pluralize.singular(model.model).replace(pluralize.singular(parentModel), ''))
+        .toLowerCase()
+    
+      // We should carry the model for controller
+      RouteHelper.set(`/api/${parentUrl}${resource}`, model)
+    
+      // Basic routes
+      if (model.actions.some(action => action === 'GET')) {
+        Route.get(`/api/${parentUrl}${resource}`, 'MainController.index').middleware('idFilter')
+        Route.get(`/api/${parentUrl}${resource}/:id`, 'MainController.show').middleware('idFilter')
+      }
+    
+      if (model.actions.some(action => action === 'POST')) {
+        Route.post(`/api/${parentUrl}${resource}`, 'MainController.store').middleware('idFilter')
+      }
+    
+      if (model.actions.some(action => action === 'PUT')) {
+        Route.put(`/api/${parentUrl}${resource}/:id`, 'MainController.update').middleware('idFilter')
+      }
+    
+      if (model.actions.some(action => action === 'DELETE')) {
+        Route.delete(`/api/${parentUrl}${resource}/:id`, 'MainController.destroy').middleware('idFilter')
+      }
+    
+      if (model.children.length > 0) {
+        // We should different parameter name for child routes
+        let idKey = pluralize.singular(resource) + 'Id'
+    
+        // We should add some dynamic middleware for this id key
+        RouteHelper.setMiddleware(idKey, model)
+    
+        for (const child of model.children) {
+          // It should be recursive
+          createRoutes(`${parentUrl}${resource}/:${idKey}/`, model.model, child)
+        }
+      }
+    }
+    
+    // Adding all routes
+    for (const model of tree) {
+      createRoutes('', '', model)
+    }
+    
+    Route.get(`/dev/routes/list`, 'MainController.getBasicRoutes')
+    Route.get(`/dev/routes/all`, 'MainController.getAllRoutes')
   }
 
   _bind (name, path) {
