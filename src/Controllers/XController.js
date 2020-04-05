@@ -5,20 +5,30 @@ const { capitalCase, snakeCase } = use('change-case')
 const Validation = use('Validation')
 const HttpException = use('APIX/Exceptions/HttpException')
 const Route = use('Route')
+const Trigger = use('Trigger')
 
 class XController {
   async index ({ request, response, params }) {
     // Loading model
-    const Model = this.getModel(request)
+    const route = RouteHelper.get(request.apix.url)
+    const modelPath = `App/Models/${route.model}`
+    const Model = use(modelPath)
+
     const query = Model.query()
 
     this.appentParentIdCondition(request, params, query)
 
+    // We should trigger onBeforePagination events
+    await Trigger.fire('onBefore', modelPath, 'paginate', { query })
+
     // Executing query
-    const items = await query.paginate(1, 10)
+    const result = await query.paginate(1, 10)
+
+    // We should trigger onBeforePagination events
+    await Trigger.fire('onAfter', modelPath, 'paginate', { result })
     
     // And this is my function response
-    return response.json(items)
+    return response.json(result)
   }
 
   async show ({ request, response, params }) {

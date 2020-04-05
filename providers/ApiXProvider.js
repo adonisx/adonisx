@@ -12,6 +12,7 @@ class ApiXProvider extends ServiceProvider {
     this._bind('APIX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
 
     this._bind('APIX/Helpers/ModelResolver', '../src/Helpers/ModelResolver')
+    this._bind('APIX/Helpers/TriggerHelper', '../src/Helpers/TriggerHelper')
     this._bind('APIX/Helpers/RouteHelper', '../src/Helpers/RouteHelper')
     this._bind('APIX/Helpers/ValidationHelper', '../src/Helpers/ValidationHelper')
 
@@ -28,6 +29,11 @@ class ApiXProvider extends ServiceProvider {
       return new RouteHelper()
     })
 
+    this.app.singleton('Trigger', function () {
+      const RouteHelper = use('APIX/Helpers/TriggerHelper')
+      return new RouteHelper()
+    })
+
     // Alias
     this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
 
@@ -35,10 +41,10 @@ class ApiXProvider extends ServiceProvider {
   }
 
   _afterProvidersBooted () {
-    console.log('_afterProvidersBooted')
     const Route = use('Route')
     const RouteHelper = use('RouteHelper')
     const ModelResolver = use('APIX/Helpers/ModelResolver')
+    const Helpers = use('Helpers')
     
     JSON.clone = (data) => {
       return JSON.parse(JSON.stringify(data))
@@ -95,6 +101,8 @@ class ApiXProvider extends ServiceProvider {
     
     Route.get(`/dev/routes/list`, 'MainController.getBasicRoutes')
     Route.get(`/dev/routes/all`, 'MainController.getAllRoutes')
+
+    require(`${Helpers.appRoot()}/start/triggers.js`)
   }
 
   _bind (name, path) {
