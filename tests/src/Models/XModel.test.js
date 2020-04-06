@@ -1,5 +1,4 @@
-const MockUse = require('./../../mocks/MockUse')
-global.use = jest.fn(() => MockUse)
+global.use = jest.fn(require('./../../mocks/MockUse'))
 
 const XModel = require('./../../../src/Models/XModel')
 

@@ -1,7 +1,6 @@
-class MockUse {
-  get _isMyMock () {
-    return true
+module.exports = (key) => {
+  const map = {
+    'Model': require('./MockModel')
   }
+  return map[key]
 }
-
-module.exports = MockUse
