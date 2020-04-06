@@ -229,3 +229,58 @@ class Users extends XModel {
 }
 module.exports = Users
 ```
+
+### 3. Triggers
+
+You may use **Triggers** in order to add your business logic. To use them, you should use `triggers.js` under **start** folder;
+
+```js
+const Trigger = use('Trigger')
+
+Trigger
+  .call('App/Triggers/UserTrigger')
+  .before('paginate')
+  .after('paginate')
+  .onModel('App/Models/Users')
+```
+
+To define a trigger for a model, you should use this structure. In this structure, there are four methods which you can use;
+
+- `call`: Which file will be triggerred.
+- `before`, `after`: When the file will be triggered.
+- `onModel`: The source model to catch triggers.
+
+In this example, methods will be triggers in **UserTrigger** file for pagination queries. 
+
+This is how `UserTrigger.js` looks under `app` folder;
+
+```js
+class UserTrigger {
+  onBeforePaginate ({ query }) {
+    query.where('id', '>', 0)
+  }
+
+  onAfterPaginate () {
+  }
+}
+
+module.exports = UserTrigger
+```
+
+In this structure, you can handle almost every query actions on models. You should look at following tables;
+
+| Handler  | Action      | Variables               |
+|----------|-------------|-------------------------|
+| before   | create      | request, params, data   |
+| before   | updateQuery | request, params, query  |
+| before   | update      | request, params, item   |
+| before   | delete      | request, params, query  |
+| before   | paginate    | query                   |
+| before   | firstOrFail | query                   |
+| after    | create      | request, params, data   |
+| after    | updateQuery | request, params, query  |
+| after    | update      | request, params, item   |
+| after    | delete      | item                    |
+| after    | paginate    | query                   |
+| after    | firstOrFail | item                    |
+
