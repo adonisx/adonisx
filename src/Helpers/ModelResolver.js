@@ -30,7 +30,7 @@ class ModelResolver {
       .filter(item => item.name === 'HasMany')
       .map(item => item.model)
 
-    const children = JSON.clone(this.map.filter(item => relationNames.indexOf(item.model) > -1))
+    const children = JSON.parse(JSON.stringify(this.map.filter(item => relationNames.indexOf(item.model) > -1)))
     for (const child of children) {
       child.children = this.getChildrens(child)
     }
