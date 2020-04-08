@@ -1,6 +1,3 @@
-const Helpers = use('Helpers')
-const fs = use('fs')
-
 class ModelResolver {
 
   constructor (modelLoader) {
@@ -40,7 +37,7 @@ class ModelResolver {
   loadMap () {
     this.map = []
     for (const file of this.files) {
-      const Model = use(`App/Models/${file.replace('.js', '')}`)
+      const Model = this.modelLoader.getInstance(file)
       const instance = new Model()
     
       const key = file.replace('.js', '')
@@ -51,7 +48,7 @@ class ModelResolver {
         relations: []
       }
     
-      const methods = this.getMethods(instance)
+      const methods = this.modelLoader.getModelRelationMethods(instance)
       for (const method of methods) {
         const result = instance[method]()
         const relation = JSON.parse(JSON.stringify(result.$relation))
@@ -62,63 +59,6 @@ class ModelResolver {
       this.map.push(item)
     }
   }
-
-  getMethods (obj) {
-    let properties = new Set()
-    let currentObj = obj
-    do {
-      Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-    } while ((currentObj = Object.getPrototypeOf(currentObj)))
-  
-    const defaultMethods = [
-      'constructor',
-      '_formatDateFields',
-      '_getSetterValue',
-      '_getGetterValue',
-      '_setCreatedAt',
-      '_setUpdatedAt',
-      '_syncOriginals',
-      '_insert',
-      '_update',
-      '_convertDatesToMomentInstances',
-      'set',
-      'toObject',
-      'save',
-      'delete',
-      'newUp',
-      'setRelated',
-      'getRelated',
-      'load',
-      'loadMany',
-      'hasOne',
-      'hasMany',
-      'belongsTo',
-      'belongsToMany',
-      'manyThrough',
-      'reload',
-      '_instantiate',
-      'fill',
-      'merge',
-      'freeze',
-      'unfreeze',
-      'toJSON',
-      '__defineGetter__',
-      '__defineSetter__',
-      'hasOwnProperty',
-      '__lookupGetter__',
-      '__lookupSetter__',
-      'isPrototypeOf',
-      'propertyIsEnumerable',
-      'toString',
-      'valueOf',
-      'toLocaleString'
-    ]
-  
-    return [...properties.keys()]
-      .filter(item => typeof obj[item] === 'function')
-      .filter(item => defaultMethods.indexOf(item) === -1)
-  }
-
 }
 
 module.exports = ModelResolver

@@ -32,3 +32,20 @@ test('Model loader should be able to get a model instance by model file name', (
   expect(use.mock.calls[0][0]).toBe('App/Models/User')
   expect(instance).toBe('MyInstance')
 })
+
+test('Model loader should be able to get instance methods', () => {
+  const instance = {
+    constructor () {},
+    set () {},
+    posts () {},
+    actions () {},
+    logs () {}
+  }
+
+  const loader = new ModelLoader(null, null, null)
+  const relationMethods = loader.getModelRelationMethods(instance)
+
+  expect(relationMethods.length).toBe(3)
+  expect(relationMethods.some(method => method === 'constructor')).toBe(false)
+  expect(relationMethods.some(method => method === 'set')).toBe(false)
+})
