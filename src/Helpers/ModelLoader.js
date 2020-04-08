@@ -11,8 +11,12 @@ class ModelLoader {
       .filter(file => file !== 'XModel.js')
   }
 
-  getInstance (file) {
+  getModel (file) {
     return this.use(`App/Models/${file.replace('.js', '')}`)
+  }
+
+  getInstance (model) {
+    return model()
   }
 
   getModelRelationMethods (instance) {

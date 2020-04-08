@@ -21,16 +21,16 @@ test('Model loader should be able to load all models except XModel', () => {
 })
 
 test('Model loader should be able to get a model instance by model file name', () => {
-  const use = jest.fn((filename) => {
-    return 'MyInstance'
+  const use = jest.fn(() => {
+    return 'MyModel'
   })
 
   const loader = new ModelLoader(use, null, null)
-  const instance = loader.getInstance('User.js')
+  const model = loader.getModel('User.js')
   
   expect(use.mock.calls.length).toBe(1)
   expect(use.mock.calls[0][0]).toBe('App/Models/User')
-  expect(instance).toBe('MyInstance')
+  expect(model).toBe('MyModel')
 })
 
 test('Model loader should be able to get instance methods', () => {

@@ -1,44 +1,14 @@
 class ModelResolver {
-
-  constructor (modelLoader) {
+  constructor (modelLoader, treeMapper) {
     this.modelLoader = modelLoader
+    this.treeMapper = treeMapper
   }
 
   get () {
-    this.files = this.modelLoader.get()
-    this.loadMap()
-    this.loadTree()
-    return this.tree
-  }
-
-  loadTree () {
-    this.tree = this.map
-      .filter(model => 
-        model.relations.length === 0 ||
-        model.relations.filter(relation => relation.name !== 'HasOne').length > 0
-      )
-    for (const model of this.tree) {
-      model.children = this.getChildrens(model)
-    }
-  }
-
-  getChildrens (model) {
-    const relationNames = model.relations
-      .filter(item => item.name === 'HasMany')
-      .map(item => item.model)
-
-    const children = JSON.parse(JSON.stringify(this.map.filter(item => relationNames.indexOf(item.model) > -1)))
-    for (const child of children) {
-      child.children = this.getChildrens(child)
-    }
-    return children
-  }
-
-  loadMap () {
-    this.map = []
-    for (const file of this.files) {
-      const Model = this.modelLoader.getInstance(file)
-      const instance = new Model()
+    const map = []
+    for (const file of this.modelLoader.getFiles()) {
+      const Model = this.modelLoader.getModel(file)
+      const instance = this.modelLoader.getInstance(Model)
     
       const key = file.replace('.js', '')
       const item = {
@@ -56,8 +26,10 @@ class ModelResolver {
         item.relations.push(relation)
       }
     
-      this.map.push(item)
+      map.push(item)
     }
+    
+    return this.treeMapper.create(map)
   }
 }
 
