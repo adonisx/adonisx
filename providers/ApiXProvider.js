@@ -2,7 +2,12 @@ const { ServiceProvider } = require('@adonisjs/fold')
 const { hooks } = require('@adonisjs/ignitor')
 const pluralize = use('pluralize')
 
+console.log('XXXXX')
+
 class ApiXProvider extends ServiceProvider {
+  constructor () {
+    console.log('ApiXProvider@constructor')
+  }
   register () {
     this._bind('APIX/Controllers/XController', '../src/Controllers/XController')
 

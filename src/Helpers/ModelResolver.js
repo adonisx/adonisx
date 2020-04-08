@@ -3,12 +3,12 @@ const fs = use('fs')
 
 class ModelResolver {
 
-  constructor () {
-    this.modelDirectory = `${Helpers.appRoot()}/app/Models`
+  constructor (modelLoader) {
+    this.modelLoader = modelLoader
   }
 
   get () {
-    this.loadFiles()
+    this.files = this.modelLoader.get()
     this.loadMap()
     this.loadTree()
     return this.tree
@@ -54,18 +54,13 @@ class ModelResolver {
       const methods = this.getMethods(instance)
       for (const method of methods) {
         const result = instance[method]()
-        const relation = JSON.clone(result.$relation)
+        const relation = JSON.parse(JSON.stringify(result.$relation))
         relation.model = result.RelatedModel.name
         item.relations.push(relation)
       }
     
       this.map.push(item)
     }
-  }
-
-  loadFiles () {
-    this.files = fs.readdirSync(this.modelDirectory)
-    this.files = this.files.filter(file => file !== 'XModel.js')
   }
 
   getMethods (obj) {
