@@ -1,13 +1,8 @@
-const { ServiceProvider } = require('@adonisjs/fold')
-const { hooks } = require('@adonisjs/ignitor')
+const { ServiceProvider } = use('@adonisjs/fold')
+const { hooks } = use('@adonisjs/ignitor')
 const pluralize = use('pluralize')
 
-console.log('XXXXX')
-
 class ApiXProvider extends ServiceProvider {
-  constructor () {
-    console.log('ApiXProvider@constructor')
-  }
   register () {
     this._bind('APIX/Controllers/XController', '../src/Controllers/XController')
 
@@ -16,17 +11,23 @@ class ApiXProvider extends ServiceProvider {
     this._bind('APIX/Exceptions/HttpException', '../src/Exceptions/HttpException')
     this._bind('APIX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
 
-    this._bind('APIX/Helpers/ModelResolver', '../src/Helpers/ModelResolver')
+    this.app.bind('APIX/Helpers/ModelResolver', () => {
+      const ModelResolver = require('../src/Helpers/ModelResolver')
+      const ModelLoader = require('../src/Helpers/ModelLoader')
+      const TreeMapper = require('../src/Helpers/TreeMapper')
+      const Helpers = use('Helpers')
+      return new ModelResolver(
+        new ModelLoader(use, use('fs'), `${Helpers.appRoot()}/app/Models/`),
+        new TreeMapper()
+      )
+    })
     this._bind('APIX/Helpers/TriggerHelper', '../src/Helpers/TriggerHelper')
     this._bind('APIX/Helpers/RouteHelper', '../src/Helpers/RouteHelper')
     this._bind('APIX/Helpers/ValidationHelper', '../src/Helpers/ValidationHelper')
 
     this._bind('APIX/Models/XModel', '../src/Models/XModel')
 
-    this.app.bind('APIX/Middleware/IdFilter', (app) => {
-      const MiddlewareValidator = require('../src/Middleware/IdFilter')
-      return new MiddlewareValidator()
-    })
+    this._bind('APIX/Middleware/IdFilter', '../src/Middleware/IdFilter')
 
     // Singleton instances
     this.app.singleton('RouteHelper', function () {
@@ -36,7 +37,9 @@ class ApiXProvider extends ServiceProvider {
 
     this.app.singleton('Trigger', function () {
       const RouteHelper = use('APIX/Helpers/TriggerHelper')
-      return new RouteHelper()
+      return new RouteHelper(
+        require('../src/Helpers/ModelLoader')
+      )
     })
 
     // Alias
@@ -55,8 +58,7 @@ class ApiXProvider extends ServiceProvider {
       return JSON.parse(JSON.stringify(data))
     }
     
-    const resolver = new ModelResolver()
-    const tree = resolver.get()
+    const tree = ModelResolver.get()
     
     const createRoutes = (parentUrl, parentModel, model) => {
       // We are deciding the sub resource name

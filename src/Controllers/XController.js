@@ -1,16 +1,16 @@
 'use strict'
 
+const { capitalCase, snakeCase } = require('change-case')
 const RouteHelper = use('RouteHelper')
-const { capitalCase, snakeCase } = use('change-case')
-const Validation = use('Validation')
 const HttpException = use('APIX/Exceptions/HttpException')
+const Validation = use('Validation')
 const Route = use('Route')
 const Trigger = use('Trigger')
 
 class XController {
   async index ({ request, response, params }) {
     // Loading model
-    const route = RouteHelper.get(request.apix.url)
+    const route = this.get(request.apix.url)
     const modelPath = `App/Models/${route.model}`
     const Model = use(modelPath)
 
@@ -33,7 +33,7 @@ class XController {
 
   async show ({ request, response, params }) {
     // Loading model
-    const route = RouteHelper.get(request.apix.url)
+    const route = this.get(request.apix.url)
     const modelPath = `App/Models/${route.model}`
     const Model = use(modelPath)
 
@@ -59,7 +59,7 @@ class XController {
 
   async store ({ request, response, params }) {
     // Loading model
-    const route = RouteHelper.get(request.apix.url)
+    const route = this.get(request.apix.url)
     const modelPath = `App/Models/${route.model}`
     const Model = use(modelPath)
 
@@ -87,7 +87,7 @@ class XController {
 
   async update ({ request, response, params }) {
     // Loading model
-    const route = RouteHelper.get(request.apix.url)
+    const route = this.get(request.apix.url)
     const modelPath = `App/Models/${route.model}`
     const Model = use(modelPath)
 
@@ -131,7 +131,7 @@ class XController {
 
   async destroy ({ request, response, params }) {
     // Loading model
-    const route = RouteHelper.get(request.apix.url)
+    const route = this.get(request.apix.url)
     const modelPath = `App/Models/${route.model}`
     const Model = use(modelPath)
 
@@ -161,7 +161,7 @@ class XController {
     try {
       return await callback()
     } catch (error) {
-      const resource = RouteHelper.get(request.apix.url)
+      const resource = this.get(request.apix.url)
       throw new HttpException(404, `Record not found on ${capitalCase(resource.model)}.`)
     }
   }
