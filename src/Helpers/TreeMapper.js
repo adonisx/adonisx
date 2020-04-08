@@ -5,7 +5,7 @@ class TreeMapper {
         model.relations.length === 0 ||
         model.relations.filter(relation => relation.name !== 'HasOne').length > 0
       )
-    for (const model of this.tree) {
+    for (const model of tree) {
       model.children = this._getChildrens(model, map)
     }
     return tree
