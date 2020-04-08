@@ -1,7 +1,8 @@
-const { pascalCase } = use('change-case')
+const { pascalCase } = require('change-case')
 
 class TriggerHelper {
-  constructor () {
+  constructor (modelLoader) {
+    this.modelLoader = modelLoader
     this.map = {}
     this.form = null
   }
@@ -14,8 +15,8 @@ class TriggerHelper {
 
     const calls = definitions.filter(definition => definition.when === when && definition.trigger === trigger)
     for (const call of calls) {
-      const TriggerFile = use(call.class)
-      const instance = new TriggerFile()
+      const TriggerFile = this.modelLoader.getContent(call.class)
+      const instance = this.modelLoader.getInstance(TriggerFile)
       if (typeof instance[call.method] !== 'function') {
         throw new Error(`There is not any ${call.method}() in ${call.class}`)
       }
