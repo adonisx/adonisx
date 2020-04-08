@@ -1,15 +1,17 @@
 'use strict'
 
-const { validateAll } = use('Validator')
-const ValidationException = use('APIX/Exceptions/ValidationException')
+const ValidationException = require('./../Exceptions/ValidationException')
 
 class ValidationHelper {
-  static async validate (inputs, rules) {
-    let validation = await validateAll(inputs, rules)
+  constructor (validateAll) {
+    this.validateAll = validateAll
+  }
+
+  async validate (inputs, rules) {
+    let validation = await this.validateAll(inputs, rules)
     if (validation.fails()) {
       throw new ValidationException(validation)
     }
   }
-
 }
 module.exports = ValidationHelper
