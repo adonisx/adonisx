@@ -4,10 +4,9 @@ const { capitalCase, snakeCase } = require('change-case')
 const HttpException = require('./../Exceptions/HttpException')
 
 class MainRepository {
-  constructor (validation, route, routeHelper, trigger, repositoryHelper) {
+  constructor (validation, route, trigger, repositoryHelper) {
     this.validation = validation
     this.route = route
-    this.routeHelper = routeHelper
     this.trigger = trigger
     this.repositoryHelper = repositoryHelper
   }
@@ -158,8 +157,8 @@ class MainRepository {
     try {
       return await callback()
     } catch (error) {
-      const resource = this.routeHelper.get(request.apix.url)
-      throw new HttpException(404, `Record not found on ${capitalCase(resource.model)}.`)
+      const name = this.repositoryHelper.getModelName(request.apix.url)
+      throw new HttpException(404, `Record not found on ${capitalCase(name)}.`)
     }
   }
 

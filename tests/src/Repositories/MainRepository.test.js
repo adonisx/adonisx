@@ -4,7 +4,6 @@ const getDependencies = () => {
   return JSON.parse(JSON.stringify({
     validation: {},
     route: {},
-    routeHelper: {},
     trigger: {},
     repositoryHelper: {}
   }))
@@ -14,7 +13,6 @@ const getInstance = (dep) => {
   return new MainRepository(
     dep.validation,
     dep.route,
-    dep.routeHelper,
     dep.trigger,
     dep.repositoryHelper
   )
@@ -148,6 +146,49 @@ test('I should be able to get first record by route definition.', async () => {
 
   expect(result).toBe('FirstOrFailResult')
 })
+
+test('I should be able to get an error while trying to reach unfound record.', async () => {
+  // Model mock
+  const query = {}
+  query.where = jest.fn(() => {})
+  query.firstOrFail = jest.fn(() => {
+    throw new Error()
+  })
+
+  const UserPost = {}
+  UserPost.query = jest.fn(() => {
+    return query
+  })
+
+  // Request mock
+  const request = getRequest()
+  request.apix.url = 'api/users/1/posts/2'
+
+  // Constructer mocks
+  const dep = getDependencies()
+  dep.repositoryHelper.getModelPath = jest.fn(() => {
+    return 'App/Models/UserPost'
+  })
+  dep.repositoryHelper.getModel = jest.fn(() => {
+    return UserPost
+  })
+  dep.repositoryHelper.getModelName = jest.fn(() => {
+    return 'UserPost'
+  })
+  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
+  dep.trigger.fire = jest.fn(() => {})
+
+  const repository = getInstance(dep)
+
+  let exceptionName = null
+  try {
+    await repository.firstOrFail(request, { userId: 1, id: 2 })
+  } catch (exception) {
+    exceptionName = exception.name
+  }
+  expect(exceptionName).toBe('HttpException')
+})
+
 
 test('I should be able to create a record by route definition.', async () => {
   // Model mock

@@ -12,6 +12,11 @@ class RepositoryHelper {
     return `App/Models/${route.model}`
   }
 
+  getModelName (url) {
+    const route = this.routeHelper.get(url)
+    return route.model
+  }
+
   getModel (path) {
     return use(path)
   }
