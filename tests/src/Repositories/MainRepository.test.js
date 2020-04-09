@@ -29,17 +29,13 @@ const getRequest = () => {
   }))
 }
 
-const getQuery = () => {
+test('MainRepository should be able to paginate by route definition.', async () => {
+  // Model mock
   const query = {}
   query.paginate = jest.fn(() => {
     return 'PaginationResult'
   })
-  return query
-}
 
-test('MainRepository should be able to paginate by route definition.', async () => {
-  // Model mock
-  const query = getQuery()
   const UserPost = {}
   UserPost.query = jest.fn(() => {
     return query
@@ -89,4 +85,66 @@ test('MainRepository should be able to paginate by route definition.', async () 
   expect(query.paginate.mock.calls[0][1]).toBe(10)
 
   expect(result).toBe('PaginationResult')
+})
+
+test('MainRepository should be able to get first record by route definition.', async () => {
+  // Model mock
+  const query = {}
+  query.where = jest.fn(() => {})
+  query.firstOrFail = jest.fn(() => {
+    return 'FirstOrFailResult'
+  })
+
+  const UserPost = {}
+  UserPost.query = jest.fn(() => {
+    return query
+  })
+
+  // Request mock
+  const request = getRequest()
+  request.apix.url = 'api/users/1/posts/2'
+
+  // Constructer mocks
+  const dep = getDependencies()
+  dep.repositoryHelper.getModelPath = jest.fn(() => {
+    return 'App/Models/UserPost'
+  })
+  dep.repositoryHelper.getModel = jest.fn(() => {
+    return UserPost
+  })
+  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
+  dep.trigger.fire = jest.fn(() => {})
+
+  const repository = getInstance(dep)
+  const result = await repository.firstOrFail(request, { userId: 1, id: 2 })
+
+  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+
+  expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
+
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][0]).toBe(query)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][1].userId).toBe(1)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][2]).toBe('userId')
+
+  expect(dep.trigger.fire.mock.calls.length).toBe(2)
+  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBefore')
+  expect(dep.trigger.fire.mock.calls[0][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[0][2]).toBe('firstOrFail')
+  expect(dep.trigger.fire.mock.calls[0][3].query).toBe(query)
+
+  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfter')
+  expect(dep.trigger.fire.mock.calls[1][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[1][2]).toBe('firstOrFail')
+  expect(dep.trigger.fire.mock.calls[1][3].item).toBe('FirstOrFailResult')
+
+  expect(query.where.mock.calls.length).toBe(1)
+  expect(query.where.mock.calls[0][0]).toBe('id')
+  expect(query.where.mock.calls[0][1]).toBe(2)
+
+  expect(query.firstOrFail.mock.calls.length).toBe(1)
+
+  expect(result).toBe('FirstOrFailResult')
 })
