@@ -388,3 +388,25 @@ test('I should be able to delete a record by route definition.', async () => {
   expect(dep.trigger.fire.mock.calls[1][3].item.title).toBe('Post Title')
   expect(dep.trigger.fire.mock.calls[1][3].item.user_id).toBe(1)
 })
+
+test('I should be able to list all routes with basic style.', async () => {
+  const dep = getDependencies()
+  dep.route.list = jest.fn(() => {
+    return [
+      {
+        toJSON () {
+          return {
+            route: 'api/users',
+            verbs: ['GET', 'POST']
+          }
+        }
+      }
+    ]
+  })
+
+  const repository = getInstance(dep)
+  const result = await repository.getBasicRoutes()
+
+  expect(result.length).toBe(1)
+  expect(result[0]).toBe('api/users [GET|POST]')
+})

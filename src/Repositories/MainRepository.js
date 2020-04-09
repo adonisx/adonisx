@@ -163,12 +163,11 @@ class MainRepository {
     }
   }
 
-  async getBasicRoutes ({ response }) {
-    let list = this.route.list().map((route) => {
+  async getBasicRoutes () {
+    return this.route.list().map((route) => {
       const item = route.toJSON()
       return `${item.route} [${item.verbs.join('|')}]`
     })
-    return response.json(list)
   }
 
   async getAllRoutes ({ response }) {
