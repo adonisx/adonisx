@@ -10,7 +10,7 @@ class ApiXProvider extends ServiceProvider {
     this._bindModels()
     this._bindRepositories()
 
-    // this._bind('APIX/Middleware/IdFilter', '../src/Middleware/IdFilter')
+    this._bind('APIX/Middleware/IdFilter', './../src/Middleware/IdFilter')
     this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
     hooks.after.providersBooted(this._afterProvidersBooted)
   }

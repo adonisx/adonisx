@@ -1,6 +1,6 @@
 'use strict'
 
-const RouteHelper = use('RouteHelper')
+const RouteHelper = use('APIX/Helpers/RouteHelper')
 const pluralize = use('pluralize')
 const { capitalCase } = use('change-case')
 const HttpException = use('APIX/Exceptions/HttpException')
