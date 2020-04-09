@@ -3,8 +3,7 @@
 const BaseExceptionHandler = use('BaseExceptionHandler')
 
 class ExceptionHandler extends BaseExceptionHandler {
-
-  async handle (error, { response, session, request, view }) {
+  async handle (error, { response }) {
     if (error.name === 'ModelNotFoundException') {
       return response.status(404).json({
         message: 'Record not found',
