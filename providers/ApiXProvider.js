@@ -53,11 +53,7 @@ class ApiXProvider extends ServiceProvider {
     const RouteHelper = use('RouteHelper')
     const ModelResolver = use('APIX/Helpers/ModelResolver')
     const Helpers = use('Helpers')
-    
-    JSON.clone = (data) => {
-      return JSON.parse(JSON.stringify(data))
-    }
-    
+        
     const tree = ModelResolver.get()
     
     const createRoutes = (parentUrl, parentModel, model) => {
