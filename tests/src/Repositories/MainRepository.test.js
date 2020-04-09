@@ -29,7 +29,7 @@ const getRequest = () => {
   }))
 }
 
-test('MainRepository should be able to paginate by route definition.', async () => {
+test('I should be able to paginate by route definition.', async () => {
   // Model mock
   const query = {}
   query.paginate = jest.fn(() => {
@@ -87,7 +87,7 @@ test('MainRepository should be able to paginate by route definition.', async () 
   expect(result).toBe('PaginationResult')
 })
 
-test('MainRepository should be able to get first record by route definition.', async () => {
+test('I should be able to get first record by route definition.', async () => {
   // Model mock
   const query = {}
   query.where = jest.fn(() => {})
@@ -147,4 +147,83 @@ test('MainRepository should be able to get first record by route definition.', a
   expect(query.firstOrFail.mock.calls.length).toBe(1)
 
   expect(result).toBe('FirstOrFailResult')
+})
+
+test('I should be able to create a record by route definition.', async () => {
+  // Model mock
+  const query = {}
+  query.where = jest.fn(() => {})
+  query.firstOrFail = jest.fn(() => {
+    return 'FirstOrFailResult'
+  })
+
+  const UserPost = {}
+  UserPost.query = jest.fn(() => {
+    return query
+  })
+  UserPost.create = jest.fn(() => {
+    return 'CreatedPost'
+  })
+  UserPost.validations = 'MyValidationRules'
+
+  // This is the form which has been sent by user to create
+  const form = {
+    title: 'Post Title',
+    description: 'Post description in here.'
+  }
+
+  // Request mock
+  const request = getRequest()
+  request.apix.url = 'api/users/1/posts'
+  request.all = jest.fn(() => {
+    return form
+  })
+  request.only = jest.fn(() => {
+    return form
+  })
+
+  // Constructer mocks
+  const dep = getDependencies()
+  dep.repositoryHelper.getModelPath = jest.fn(() => {
+    return 'App/Models/UserPost'
+  })
+  dep.repositoryHelper.getModel = jest.fn(() => {
+    return UserPost
+  })
+
+  // Trigger mocks
+  dep.trigger.fire = jest.fn(() => {})
+
+  // Validation mocks
+  dep.validation.validate = jest.fn(async () => {})
+
+  const repository = getInstance(dep)
+  const result = await repository.store(request, { userId: 1 })
+
+  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts')
+
+  expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
+
+  expect(dep.validation.validate.mock.calls.length).toBe(1)
+  expect(dep.validation.validate.mock.calls[0][0]).toBe(form)
+  expect(dep.validation.validate.mock.calls[0][1]).toBe('MyValidationRules')
+
+  expect(dep.trigger.fire.mock.calls.length).toBe(2)
+  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBefore')
+  expect(dep.trigger.fire.mock.calls[0][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[0][2]).toBe('create')
+  expect(dep.trigger.fire.mock.calls[0][3].data.title).toBe('Post Title')
+  expect(dep.trigger.fire.mock.calls[0][3].data.description).toBe('Post description in here.')
+  expect(dep.trigger.fire.mock.calls[0][3].data.user_id).toBe(1)
+
+  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfter')
+  expect(dep.trigger.fire.mock.calls[1][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[1][2]).toBe('create')
+  expect(dep.trigger.fire.mock.calls[1][3].item).toBe('CreatedPost')
+
+  expect(UserPost.create.mock.calls.length).toBe(1)
+
+  expect(result).toBe('CreatedPost')
 })
