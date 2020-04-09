@@ -170,11 +170,10 @@ class MainRepository {
     })
   }
 
-  async getAllRoutes ({ response }) {
-    let list = this.route.list().map((route) => {
+  async getAllRoutes () {
+    return this.route.list().map((route) => {
       return route.toJSON()
     })
-    return response.json(list)
   }
 }
 

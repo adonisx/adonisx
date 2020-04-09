@@ -410,3 +410,29 @@ test('I should be able to list all routes with basic style.', async () => {
   expect(result.length).toBe(1)
   expect(result[0]).toBe('api/users [GET|POST]')
 })
+
+test('I should be able to list all routes with full detail style.', async () => {
+  const dep = getDependencies()
+  const routes = [
+    {
+      toJSON () {
+        return {
+          route: 'api/users',
+          verbs: ['GET', 'POST']
+        }
+      }
+    }
+  ]
+  dep.route.list = jest.fn(() => {
+    return routes
+  })
+
+  const repository = getInstance(dep)
+  const result = await repository.getAllRoutes()
+
+  expect(result.length).toBe(1)
+  expect(result[0].route).toBe('api/users')
+  expect(result[0].verbs.length).toBe(2)
+  expect(result[0].verbs[0]).toBe('GET')
+  expect(result[0].verbs[1]).toBe('POST')
+})
