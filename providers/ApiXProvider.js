@@ -8,10 +8,9 @@ class ApiXProvider extends ServiceProvider {
     this._bindExceptions()
     this._bindHelpers()
     this._bindModels()
+    this._bindMiddlewares()
     this._bindRepositories()
-
-    this._bind('APIX/Middleware/IdFilter', './../src/Middleware/IdFilter')
-    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+    this._bindAlias()
     hooks.after.providersBooted(this._afterProvidersBooted)
   }
 
@@ -75,6 +74,13 @@ class ApiXProvider extends ServiceProvider {
     this._bind('APIX/Models/XModel', '../src/Models/XModel')
   }
 
+  _bindMiddlewares () {
+    this.app.bind('APIX/Middleware/IdFilter', () => {
+      const IdFilter = require('./../src/Middleware/IdFilter')
+      return new IdFilter()
+    })
+  }
+
   _bindRepositories () {
     this.app.bind('APIX/Repositories/RepositoryHelper', () => {
       const RepositoryHelper = require('./../src/Repositories/RepositoryHelper')
@@ -91,6 +97,16 @@ class ApiXProvider extends ServiceProvider {
         use('APIX/Helpers/TriggerHelper'),
         use('APIX/Repositories/RepositoryHelper')
       )
+    })
+  }
+
+  _bindAlias () {
+    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+  }
+
+  _bind (name, path) {
+    this.app.bind(name, () => {
+      return require(path)
     })
   }
 
@@ -152,12 +168,6 @@ class ApiXProvider extends ServiceProvider {
     Route.get(`/dev/routes/all`, 'MainController.getAllRoutes')
 
     require(`${Helpers.appRoot()}/start/triggers.js`)
-  }
-
-  _bind (name, path) {
-    this.app.bind(name, () => {
-      return require(path)
-    })
   }
 }
 
