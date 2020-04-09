@@ -227,3 +227,98 @@ test('I should be able to create a record by route definition.', async () => {
 
   expect(result).toBe('CreatedPost')
 })
+
+test('I should be able to update a record by route definition.', async () => {
+  // Item mocks
+  const item = {
+    id: 2,
+    user_id: 1,
+    title: 'Post Title',
+    description: null
+  }
+  item.merge = jest.fn(() => {
+    item.description = 'Updated description'
+  })
+  item.toJSON = jest.fn(() => {
+    return item
+  })
+  item.save = jest.fn(async () => {})
+
+  // Query mocks
+  const query = {}
+  query.where = jest.fn(() => {
+    return query
+  })
+  query.firstOrFail = jest.fn(async () => {
+    return item
+  })
+
+  // Model mocks
+  const UserPost = {}
+  UserPost.query = jest.fn(() => {
+    return query
+  })
+  UserPost.validations = 'MyValidationRules'
+
+  // This is the form which has been sent by user to create
+  const form = {
+    title: 'Post Title',
+    description: 'Post description in here.'
+  }
+
+  // Request mock
+  const request = getRequest()
+  request.apix.url = 'api/users/1/posts/2'
+  request.only = jest.fn(() => {
+    return form
+  })
+
+  // Constructer mocks
+  const dep = getDependencies()
+  dep.repositoryHelper.getModelPath = jest.fn(() => {
+    return 'App/Models/UserPost'
+  })
+  dep.repositoryHelper.getModel = jest.fn(() => {
+    return UserPost
+  })
+  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
+
+  // Trigger mocks
+  dep.trigger.fire = jest.fn(() => {})
+
+  // Validation mocks
+  dep.validation.validate = jest.fn(async () => {})
+
+  const repository = getInstance(dep)
+  const result = await repository.update(request, { userId: 1 })
+
+  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+
+  expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
+
+  expect(dep.validation.validate.mock.calls.length).toBe(1)
+  expect(dep.validation.validate.mock.calls[0][0]).toBe(item)
+  expect(dep.validation.validate.mock.calls[0][1]).toBe('MyValidationRules')
+
+  expect(dep.trigger.fire.mock.calls.length).toBe(4)
+  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBefore')
+  expect(dep.trigger.fire.mock.calls[0][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[0][2]).toBe('updateQuery')
+
+  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfter')
+  expect(dep.trigger.fire.mock.calls[1][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[1][2]).toBe('updateQuery')
+  expect(dep.trigger.fire.mock.calls[1][3].item.title).toBe('Post Title')
+  expect(dep.trigger.fire.mock.calls[1][3].item.user_id).toBe(1)
+
+  expect(dep.trigger.fire.mock.calls[2][0]).toBe('onBefore')
+  expect(dep.trigger.fire.mock.calls[2][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[2][2]).toBe('update')
+  expect(dep.trigger.fire.mock.calls[2][3].item.title).toBe('Post Title')
+  expect(dep.trigger.fire.mock.calls[2][3].item.description).toBe('Updated description')
+  expect(dep.trigger.fire.mock.calls[2][3].item.user_id).toBe(1)
+
+  expect(result).toBe(item)
+})
