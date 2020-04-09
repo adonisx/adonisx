@@ -2,7 +2,7 @@
 
 class XController {
   constructor () {
-    this.repository = use('MainRepository')
+    this.repository = use('APIX/Repositories/MainRepository')
   }
 
   async index ({ request, response, params }) {
@@ -32,6 +32,18 @@ class XController {
   async destroy ({ request, response, params }) {
     await this.repository.destroy(request, params)
     return response.ok()
+  }
+
+  async getBasicRoutes ({ response }) {
+    return response.json(
+      await this.repository.getBasicRoutes()
+    )
+  }
+
+  async getAllRoutes ({ response }) {
+    return response.json(
+      await this.repository.getAllRoutes()
+    )
   }
 }
 

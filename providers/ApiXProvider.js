@@ -4,53 +4,99 @@ const pluralize = use('pluralize')
 
 class ApiXProvider extends ServiceProvider {
   register () {
-    this._bind('APIX/Controllers/XController', '../src/Controllers/XController')
+    this._bindControllers()
+    this._bindExceptions()
+    this._bindHelpers()
+    this._bindModels()
+    this._bindRepositories()
 
+    // this._bind('APIX/Middleware/IdFilter', '../src/Middleware/IdFilter')
+    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+    hooks.after.providersBooted(this._afterProvidersBooted)
+  }
+
+  _bindControllers () {
+    this._bind('APIX/Controllers/XController', '../src/Controllers/XController')
+  }
+
+  _bindExceptions () {
     this._bind('APIX/Exceptions/ApiException', '../src/Exceptions/ApiException')
     this._bind('APIX/Exceptions/Handler', '../src/Exceptions/Handler')
     this._bind('APIX/Exceptions/HttpException', '../src/Exceptions/HttpException')
     this._bind('APIX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
+  }
 
-    this.app.bind('APIX/Helpers/ModelResolver', () => {
-      const ModelResolver = require('../src/Helpers/ModelResolver')
-      const ModelLoader = require('../src/Helpers/ModelLoader')
-      const TreeMapper = require('../src/Helpers/TreeMapper')
+  _bindHelpers () {
+    this.app.bind('APIX/Helpers/ModelLoader', () => {
+      const ModelLoader = require('./../src/Helpers/ModelLoader')
       const Helpers = use('Helpers')
-      return new ModelResolver(
-        new ModelLoader(use, use('fs'), `${Helpers.appRoot()}/app/Models/`),
-        new TreeMapper()
+      return new ModelLoader(
+        use,
+        use('fs'),
+        `${Helpers.appRoot()}/app/Models/`
       )
     })
-    this._bind('APIX/Helpers/TriggerHelper', '../src/Helpers/TriggerHelper')
-    this._bind('APIX/Helpers/RouteHelper', '../src/Helpers/RouteHelper')
-    this._bind('APIX/Helpers/ValidationHelper', '../src/Helpers/ValidationHelper')
 
-    this._bind('APIX/Models/XModel', '../src/Models/XModel')
+    this.app.bind('APIX/Helpers/ModelResolver', () => {
+      const ModelResolver = require('./../src/Helpers/ModelResolver')
+      return new ModelResolver(
+        use('APIX/Helpers/ModelLoader'),
+        use('APIX/Helpers/TreeMapper')
+      )
+    })
 
-    this._bind('APIX/Middleware/IdFilter', '../src/Middleware/IdFilter')
-
-    // Singleton instances
-    this.app.singleton('RouteHelper', function () {
-      const RouteHelper = use('APIX/Helpers/RouteHelper')
+    this.app.singleton('APIX/Helpers/RouteHelper', () => {
+      const RouteHelper = require('./../src/Helpers/RouteHelper')
       return new RouteHelper()
     })
 
-    this.app.singleton('Trigger', function () {
-      const RouteHelper = use('APIX/Helpers/TriggerHelper')
-      return new RouteHelper(
-        require('../src/Helpers/ModelLoader')
+    this.app.bind('APIX/Helpers/TreeMapper', () => {
+      const TreeMapper = require('./../src/Helpers/TreeMapper')
+      return new TreeMapper()
+    })
+
+    this.app.singleton('APIX/Helpers/TriggerHelper', () => {
+      const TriggerHelper = require('./../src/Helpers/TriggerHelper')
+      return new TriggerHelper(
+        use('APIX/Helpers/ModelLoader')
       )
     })
 
-    // Alias
-    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+    this.app.bind('APIX/Helpers/ValidationHelper', () => {
+      const ValidationHelper = require('./../src/Helpers/ValidationHelper')
+      const { validateAll } = use('Validator')
+      return new ValidationHelper(
+        validateAll
+      )
+    })
+  }
 
-    hooks.after.providersBooted(this._afterProvidersBooted)
+  _bindModels () {
+    this._bind('APIX/Models/XModel', '../src/Models/XModel')
+  }
+
+  _bindRepositories () {
+    this.app.bind('APIX/Repositories/RepositoryHelper', () => {
+      const RepositoryHelper = require('./../src/Repositories/RepositoryHelper')
+      return new RepositoryHelper(
+        use('APIX/Helpers/RouteHelper')
+      )
+    })
+
+    this.app.bind('APIX/Repositories/MainRepository', () => {
+      const MainRepository = require('./../src/Repositories/MainRepository')
+      return new MainRepository(
+        use('APIX/Helpers/ValidationHelper'),
+        use('Route'),
+        use('APIX/Helpers/TriggerHelper'),
+        use('APIX/Repositories/RepositoryHelper')
+      )
+    })
   }
 
   _afterProvidersBooted () {
     const Route = use('Route')
-    const RouteHelper = use('RouteHelper')
+    const RouteHelper = use('APIX/Helpers/RouteHelper')
     const ModelResolver = use('APIX/Helpers/ModelResolver')
     const Helpers = use('Helpers')
         
