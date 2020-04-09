@@ -322,3 +322,69 @@ test('I should be able to update a record by route definition.', async () => {
 
   expect(result).toBe(item)
 })
+
+test('I should be able to delete a record by route definition.', async () => {
+  // Item mocks
+  const item = {
+    id: 2,
+    user_id: 1,
+    title: 'Post Title',
+    description: null
+  }
+  item.toJSON = jest.fn(() => {
+    return item
+  })
+
+  // Query mocks
+  const query = {}
+  query.where = jest.fn(() => {
+    return query
+  })
+  query.firstOrFail = jest.fn(async () => {
+    return item
+  })
+  query.delete = jest.fn(async () => {})
+
+  // Model mocks
+  const UserPost = {}
+  UserPost.query = jest.fn(() => {
+    return query
+  })
+
+  // Request mock
+  const request = getRequest()
+  request.apix.url = 'api/users/1/posts/2'
+
+  // Constructer mocks
+  const dep = getDependencies()
+  dep.repositoryHelper.getModelPath = jest.fn(() => {
+    return 'App/Models/UserPost'
+  })
+  dep.repositoryHelper.getModel = jest.fn(() => {
+    return UserPost
+  })
+  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
+
+  // Trigger mocks
+  dep.trigger.fire = jest.fn(() => {})
+
+  const repository = getInstance(dep)
+  await repository.destroy(request, { userId: 1 })
+
+  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+
+  expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
+
+  expect(dep.trigger.fire.mock.calls.length).toBe(2)
+  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBefore')
+  expect(dep.trigger.fire.mock.calls[0][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[0][2]).toBe('delete')
+
+  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfter')
+  expect(dep.trigger.fire.mock.calls[1][1]).toBe('App/Models/UserPost')
+  expect(dep.trigger.fire.mock.calls[1][2]).toBe('delete')
+  expect(dep.trigger.fire.mock.calls[1][3].item.title).toBe('Post Title')
+  expect(dep.trigger.fire.mock.calls[1][3].item.user_id).toBe(1)
+})
