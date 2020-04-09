@@ -39,3 +39,18 @@ test('RepositoryHelper should be able to add parent id condition if we have.', (
   expect(query.where.mock.calls[0][0]).toBe('user_id')
   expect(query.where.mock.calls[0][1]).toBe(1)
 })
+
+test('I should be able to model name.', () => {
+  const routeHelper = {}
+  routeHelper.get = jest.fn(() => {
+    return {
+      model: 'User'
+    }
+  })
+  const helper = new RepositoryHelper(routeHelper)
+  const name = helper.getModelName('api/users')
+  
+  expect(routeHelper.get.mock.calls.length).toBe(1)
+  expect(routeHelper.get.mock.calls[0][0]).toBe('api/users')
+  expect(name).toBe('User')
+})
