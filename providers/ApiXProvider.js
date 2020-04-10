@@ -111,62 +111,18 @@ class ApiXProvider extends ServiceProvider {
   }
 
   _afterProvidersBooted () {
-    const Route = use('Route')
-    const RouteHelper = use('APIX/Helpers/RouteHelper')
     const ModelResolver = use('APIX/Helpers/ModelResolver')
     const Helpers = use('Helpers')
-        
-    const tree = ModelResolver.get()
+  
+    // We should create all routes by models
+    const RouteCreator = require('./../src/Helpers/RouteCreator')
+    const creator = new RouteCreator(
+      use('Route'),
+      use('APIX/Helpers/RouteHelper')
+    )
+    creator.create(ModelResolver.get())
     
-    const createRoutes = (parentUrl, parentModel, model) => {
-      // We are deciding the sub resource name
-      let resource = pluralize
-        .plural(pluralize.singular(model.model).replace(pluralize.singular(parentModel), ''))
-        .toLowerCase()
-    
-      // We should carry the model for controller
-      RouteHelper.set(`/api/${parentUrl}${resource}`, model)
-    
-      // Basic routes
-      if (model.actions.some(action => action === 'GET')) {
-        Route.get(`/api/${parentUrl}${resource}`, 'MainController.index').middleware('idFilter')
-        Route.get(`/api/${parentUrl}${resource}/:id`, 'MainController.show').middleware('idFilter')
-      }
-    
-      if (model.actions.some(action => action === 'POST')) {
-        Route.post(`/api/${parentUrl}${resource}`, 'MainController.store').middleware('idFilter')
-      }
-    
-      if (model.actions.some(action => action === 'PUT')) {
-        Route.put(`/api/${parentUrl}${resource}/:id`, 'MainController.update').middleware('idFilter')
-      }
-    
-      if (model.actions.some(action => action === 'DELETE')) {
-        Route.delete(`/api/${parentUrl}${resource}/:id`, 'MainController.destroy').middleware('idFilter')
-      }
-    
-      if (model.children.length > 0) {
-        // We should different parameter name for child routes
-        let idKey = pluralize.singular(resource) + 'Id'
-    
-        // We should add some dynamic middleware for this id key
-        RouteHelper.setMiddleware(idKey, model)
-    
-        for (const child of model.children) {
-          // It should be recursive
-          createRoutes(`${parentUrl}${resource}/:${idKey}/`, model.model, child)
-        }
-      }
-    }
-    
-    // Adding all routes
-    for (const model of tree) {
-      createRoutes('', '', model)
-    }
-    
-    Route.get(`/dev/routes/list`, 'MainController.getBasicRoutes')
-    Route.get(`/dev/routes/all`, 'MainController.getAllRoutes')
-
+    // Finally we should require the triggers if there is any.
     require(`${Helpers.appRoot()}/start/triggers.js`)
   }
 }
