@@ -1,13 +1,35 @@
 'use strict'
 
-const RouteHelper = use('APIX/Helpers/RouteHelper')
-const pluralize = use('pluralize')
-const { capitalCase } = use('change-case')
-const HttpException = use('APIX/Exceptions/HttpException')
+const pluralize = require('pluralize')
+const { capitalCase } = require('change-case')
+const HttpException = require('./../Exceptions/HttpException')
 
 class IdFilter {
+  constructor (routeHelper) {
+    this.routeHelper = routeHelper
+  }
+
   async handle ({ request, params }, next) {
-    // Calculating real url schema
+    this._setMatchedUrl(request, params)
+    this._setParentColumns(request)
+
+    // Fetching idKey data automatically
+    for (const idKey of this._getSpecialIdKeys(request.apix.url)) {
+      const Middleware = this.routeHelper.getMiddlewareModel(idKey)
+      const Model = this._loadModel(Middleware.model)
+
+      try {
+        request.apix.layers[pluralize.singular(Middleware.table)] = await this._findOrFail(Model, params, idKey)
+      } catch (error) {
+        console.log(error)
+        throw new HttpException(404, `Record not found on ${capitalCase(Middleware.model)}.`)
+      }
+    }
+
+    await next()
+  }
+
+  _setMatchedUrl (request, params) {
     let url = request.url()
     for (const key in params) {
       url = url.replace(`/${params[key]}`, `/:${key}`)
@@ -17,11 +39,11 @@ class IdFilter {
     // We want to use this data in controller
     request.apix = {
       url,
-      parent_id: null,
       layers: {}
     }
+  }
 
-    // We should calculate parent id if there is not any idx on url.
+  _setParentColumns (request) {
     const sections = request.apix.url
       .replace('/api/', '')
       .split('/')
@@ -29,30 +51,26 @@ class IdFilter {
     if (sections.length > 0) {
       request.apix.parent_column = sections[sections.length - 1].replace(':', '')
     }
+  }
 
-    // WE should check if there is any special idKey in url
-    const parts = request.apix.url
+  _getSpecialIdKeys (url) {
+    return url
       .split('/')
       .filter(item => item.indexOf(':') > -1)
       .filter(item => item !== ':id')
+      .map(item => item.replace(':', ''))
+  }
 
-    // Fetching idKey data automatically
-    for (const part of parts) {
-      const Middleware = RouteHelper.getMiddlewareModel(part.replace(':', ''))
-      const Model = use(`App/Models/${Middleware.model}`)
+  _loadModel (model) {
+    return use(`App/Models/${model}`)
+  }
 
-      try {
-        request.apix.layers[pluralize.singular(Middleware.table)] = (await Model
-          .query()
-          .where('id', params[part.replace(':', '')])
-          .firstOrFail())
-          .toJSON()
-      } catch (error) {
-        throw new HttpException(404, `Record not found on ${capitalCase(Middleware.model)}.`)
-      }
-    }
-
-    await next()
+  async _findOrFail (Model, params, idKey) {
+    return (await Model
+      .query()
+      .where('id', params[idKey])
+      .firstOrFail())
+      .toJSON()
   }
 }
 
