@@ -77,7 +77,9 @@ class ApiXProvider extends ServiceProvider {
   _bindMiddlewares () {
     this.app.bind('APIX/Middleware/IdFilter', () => {
       const IdFilter = require('./../src/Middleware/IdFilter')
-      return new IdFilter()
+      return new IdFilter(
+        use('APIX/Helpers/RouteHelper')
+      )
     })
   }
 
