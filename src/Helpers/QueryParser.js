@@ -240,7 +240,7 @@ class QueryParser {
       throw new Error(`Unacceptable field name: ${field}`)
     }
 
-    if (field.indexOf('.') === field.length - 1) {
+    if (field.indexOf('.') === 0 || field.indexOf('.') === field.length - 1) {
       throw new Error(`You have to define the column specefically: ${field}`)
     }
 }
