@@ -151,9 +151,19 @@ class QueryParser {
     return result
   }
 
+  _parseConditions (conditions) {
+    if (!Array.isArray(conditions)) {
+      throw new Error('An array should be sent to parseConditions() method.')
+    }
+
+    return conditions.map(condition => {
+      return this._parseCondition(condition)
+    })
+  }
+
   _parseCondition (content) {
     const where = {
-      prefix: '',
+      prefix: null,
       field: null,
       condition: '=',
       value: null

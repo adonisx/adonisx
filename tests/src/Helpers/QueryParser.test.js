@@ -242,6 +242,22 @@ test('I should be able to parsing query condition', () => {
   expect(result.value).toBe(18)
 })
 
+test('I should be able to parsing all conditions', () => {
+  const parser = new QueryParser()
+  let result = parser._parseConditions([{ "name": "Özgür" }, { "$or.surname": "Işıklı" }])
+
+  expect(result.length).toBe(2)
+  expect(result[0].prefix).toBe(null)
+  expect(result[0].field).toBe('name')
+  expect(result[0].condition).toBe('=')
+  expect(result[0].value).toBe('Özgür')
+
+  expect(result[1].prefix).toBe('or')
+  expect(result[1].field).toBe('surname')
+  expect(result[1].condition).toBe('=')
+  expect(result[1].value).toBe('Işıklı')
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
