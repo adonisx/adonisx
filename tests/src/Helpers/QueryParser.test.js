@@ -117,13 +117,33 @@ test('I should be able to get an error while parsing unacceptable column name', 
   expect(() => { parser._parseFields('id,full-name') }).toThrow(Error)
 })
 
+test('I should be able to parsing sorting options', () => {
+  const parser = new QueryParser()
+  let result = parser._parseSortingOptions('id,-name,+surname')
+  expect(result.length).toBe(3)
+  expect(result[0].field).toBe('id')
+  expect(result[0].type).toBe('ASC')
+  expect(result[1].field).toBe('name')
+  expect(result[1].type).toBe('DESC')
+  expect(result[2].field).toBe('surname')
+  expect(result[2].type).toBe('ASC')
+})
+
+test('I should be able to get an error while parsing unacceptable column in sorting', () => {
+  const parser = new QueryParser()
+  expect(parser._parseSortingOptions('id,full_name')[1].field).toBe('full_name')
+  expect(() => { parser._parseSortingOptions('id,full-name') }).toThrow(Error)
+  expect(() => { parser._parseSortingOptions('id,full+name') }).toThrow(Error)
+  expect(() => { parser._parseSortingOptions('id,fullname12') }).toThrow(Error) 
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
     q: '{"id": 10}',
     page: '1',
     per_page: '25',
-    sort: '-id',
+    sort: 'id,-name',
     fields: 'id,name,surname',
     with: 'role'
   }
@@ -138,6 +158,13 @@ test('I should be able to parse all sections', () => {
   expect(result.fields[0]).toBe('id')
   expect(result.fields[1]).toBe('name')
   expect(result.fields[2]).toBe('surname')
+
+  // Sorting selections
+  expect(result.sort.length).toBe(2)
+  expect(result.sort[0].field).toBe('id')
+  expect(result.sort[0].type).toBe('ASC')
+  expect(result.sort[1].field).toBe('name')
+  expect(result.sort[1].type).toBe('DESC')
 })
 
 test('I should be able to get query parsing result', () => {

@@ -18,6 +18,23 @@ class QueryParser {
     }
   }
 
+  applyFields (query, fields) {
+    // Users should be able to select some fields to show.
+    if (fields.length > 0 && fields !== '*') {
+      query.select(fields)
+    }
+  }
+
+  applySorting (query, sort) {
+    if (sort.length === 0) {
+      return
+    }
+
+    sort.forEach(item => {
+      query.orderBy(item.field, item.type)
+    })
+  }
+
   get (query) {
     return this._parseSections(
       this._getSections(query)
@@ -53,6 +70,7 @@ class QueryParser {
     sections.page = this._parsePage(sections.page)
     sections.per_page = this._parsePerPage(sections.per_page)
     sections.fields = this._parseFields(sections.fields)
+    sections.sort = this._parseSortingOptions(sections.sort)
     return sections
   }
 
@@ -101,12 +119,44 @@ class QueryParser {
     const fields = content.split(',')
     const regex = /^[a-zA-Z_.]+$/
     fields.forEach(field => {
-      if (!field.match(regex)) {
-        throw new Error(`Unacceptable field name: ${field}`)
-      }
+      this._shouldBeAcceptableColumn(field)
     })
     return fields
   }
+
+  _parseSortingOptions (content) {
+    // If there is not any sorting options, we don't have to return any value
+    if (!content) {
+      return []
+    }
+
+    const result = []
+    for (let field of content.split(',')) {
+      let type = 'ASC'
+      if (field.indexOf('-') === 0) {
+        type = 'DESC'
+        field = field.substr(1)
+      }
+
+      if (field.indexOf('+') === 0) {
+        field = field.substr(1)
+      }
+
+      this._shouldBeAcceptableColumn(field)
+      result.push({
+        field,
+        type
+      })
+    }
+    return result
+  }
+
+  _shouldBeAcceptableColumn (field) {
+    const regex = /^[a-zA-Z_.]+$/
+    if (!field.match(regex)) {
+      throw new Error(`Unacceptable field name: ${field}`)
+    }
+}
 }
 
 module.exports = QueryParser

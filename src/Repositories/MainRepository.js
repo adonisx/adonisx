@@ -15,22 +15,25 @@ class MainRepository {
   async paginate (request, params) {
     // We should parse URL query string to use as condition in Lucid query
     const conditions = this.queryParser.get(request.all())
+    console.log(conditions)
 
     // Loading model
     const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
+    // Creating a new database query
     const query = Model.query()
+
+    // Users should be able to select some fields to show.
+    this.queryParser.applyFields(query, conditions.fields)
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
-    // Users should be able to select some fields to show.
-    if (conditions.fields.length > 0 && conditions.fields !== '*') {
-      query.select(conditions.fields)
-    }
-
     // We should trigger onBeforePagination events
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
+
+    // User should be able to select sorting fields and types
+    this.queryParser.applySorting(query, conditions.sort)
 
     // Executing query
     const result = await query.paginate(
@@ -46,12 +49,19 @@ class MainRepository {
   }
 
   async firstOrFail (request, params) {
+    // We should parse URL query string to use as condition in Lucid query
+    const conditions = this.queryParser.get(request.all())
+
     // Loading model
     const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // Fetching item
     const query = Model.query()
+
+    // Users should be able to select some fields to show.
+    this.queryParser.applyFields(query, conditions.fields)
+
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
     // We should add this condition in here because of performance.
