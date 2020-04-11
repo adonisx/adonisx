@@ -173,3 +173,42 @@ test('I should be able to get query parsing result', () => {
   expect(result.page).toBe(1)
   expect(result.per_page).toBe(10)
 })
+
+test('I should be able to apply my field selections to qeuery', () => {
+  const query = {}
+  query.select = jest.fn(() => {})
+  const parser = new QueryParser()
+  parser.applyFields(query, 'MyFields')
+
+  expect(query.select.mock.calls.length).toBe(1)
+  expect(query.select.mock.calls[0][0]).toBe('MyFields')
+})
+
+test('I should be able to not see calling to select mehtod when I don`t have any field selection', () => {
+  const query = {}
+  query.select = jest.fn(() => {})
+  const parser = new QueryParser()
+  parser.applyFields(query, [])
+
+  expect(query.select.mock.calls.length).toBe(0)
+})
+
+test('I should be able to apply sorting selection to the query', () => {
+  const query = {}
+  query.orderBy = jest.fn(() => {})
+  const parser = new QueryParser()
+  parser.applySorting(query, [ { field: 'id', type: 'ASC' }])
+
+  expect(query.orderBy.mock.calls.length).toBe(1)
+  expect(query.orderBy.mock.calls[0][0]).toBe('id')
+  expect(query.orderBy.mock.calls[0][1]).toBe('ASC')
+})
+
+test('I should be able to apply see not using order by method when I don`t have any ordering option', () => {
+  const query = {}
+  query.orderBy = jest.fn(() => {})
+  const parser = new QueryParser()
+  parser.applySorting(query, [])
+
+  expect(query.orderBy.mock.calls.length).toBe(0)
+})
