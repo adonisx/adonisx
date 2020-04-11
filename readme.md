@@ -338,7 +338,7 @@ APIX has several where conditions to use.
 WHERE `id` = 1
 ```
 
-##### 4.4.2. Multiple Condition
+##### 4.4.2. Multiple Conditions
 
 ```
 /api/users?q=[ {"name": "John"}, {"surname": "Locke" } ]
@@ -348,7 +348,7 @@ WHERE `id` = 1
 WHERE `name` = 'John' AND `surname` = 'Locke'
 ```
 
-##### 4.4.3. OR Expression On Multiple Condition
+##### 4.4.3. OR Expression On Multiple Conditions
 
 ```
 /api/users?q=[ {"name": "John"}, {"$or.surname": "Locke" } ]
