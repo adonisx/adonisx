@@ -151,6 +151,73 @@ class QueryParser {
     return result
   }
 
+  _parseCondition (content) {
+    const where = {
+      prefix: '',
+      field: null,
+      condition: '=',
+      value: null
+    }
+
+    const key = Object.keys(content)[0]
+    where.field = key
+    where.value = content[key]
+
+    // Sometimes we can have basic OR operations for queries
+    if (where.field.indexOf('$or.') === 0) {
+      where.prefix = 'or'
+      where.field = where.field.replace('$or.', '')
+    }
+
+    this._applySpecialCondition(where, '$not', '<>')
+    this._applySpecialCondition(where, '$gt', '>')
+    this._applySpecialCondition(where, '$gte', '>=')
+    this._applySpecialCondition(where, '$lt', '<')
+    this._applySpecialCondition(where, '$lte', '<=')
+    this._applySpecialCondition(where, '$like', 'LIKE')
+    this._applySpecialCondition(where, '$notLike', 'NOT LIKE')
+    this._applySpecialCondition(where, '$in', 'In')
+    this._applySpecialCondition(where, '$notIn', 'NotIn')
+    this._applySpecialCondition(where, '$between', 'Between')
+    this._applySpecialCondition(where, '$notBetween', 'NotBetween')
+    this._applySpecialCondition(where, '$null', 'Null')
+    this._applySpecialCondition(where, '$notNull', 'NotNull')
+
+    if (where.condition === 'In' || where.condition === 'NotIn') {
+      where.value = where.value.split(',')
+    }
+
+    if (where.condition === 'Between' || where.condition === 'NotBetween') {
+      where.value = where.value.split(':')
+    }
+
+    if (where.condition === 'Null' || where.condition === 'NotNull') {
+      where.value = null
+    }
+
+    return where
+  }
+
+  _applySpecialCondition (where, structure, condition) {
+    structure = `.${structure}`
+    if (this._hasSpecialStructure(where.field, structure)) {
+      where.field = where.field.replace(structure, '')
+      where.condition = condition
+    }
+  }
+
+  _hasSpecialStructure (field, structure) {
+    if (field.indexOf(structure) === -1) {
+      return false
+    }
+    
+    if (field.indexOf(structure) === field.length - (structure.length)) {
+      return true
+    }
+
+    return false
+  }
+
   _shouldBeAcceptableColumn (field) {
     const regex = /^[a-zA-Z_.]+$/
     if (!field.match(regex)) {

@@ -137,6 +137,111 @@ test('I should be able to get an error while parsing unacceptable column in sort
   expect(() => { parser._parseSortingOptions('id,fullname12') }).toThrow(Error) 
 })
 
+test('I should be able to parsing query condition', () => {
+  const parser = new QueryParser()
+
+  // Simple query
+  let result = parser._parseCondition({ "name": "Özgür" })
+  expect(result.field).toBe('name')
+  expect(result.condition).toBe('=')
+  expect(result.value).toBe('Özgür')
+
+  // .$not logic tests
+  result = parser._parseCondition({ "id.$not": 1 })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('<>')
+  expect(result.value).toBe(1)
+
+  // .$gt logic tests
+  result = parser._parseCondition({ "id.$gt": 1 })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('>')
+  expect(result.value).toBe(1)
+
+  // .$gte logic tests
+  result = parser._parseCondition({ "id.$gte": 1 })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('>=')
+  expect(result.value).toBe(1)
+
+  // .$lt logic tests
+  result = parser._parseCondition({ "id.$lt": 1 })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('<')
+  expect(result.value).toBe(1)
+
+  // .$lte logic tests
+  result = parser._parseCondition({ "id.$lte": 1 })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('<=')
+  expect(result.value).toBe(1)
+
+  // .$like logic tests
+  result = parser._parseCondition({ "name.$like": 'John%' })
+  expect(result.field).toBe('name')
+  expect(result.condition).toBe('LIKE')
+  expect(result.value).toBe('John%')
+
+  // .$notLike logic tests
+  result = parser._parseCondition({ "name.$notLike": 'John%' })
+  expect(result.field).toBe('name')
+  expect(result.condition).toBe('NOT LIKE')
+  expect(result.value).toBe('John%')
+
+  // .$in logic tests
+  result = parser._parseCondition({ "id.$in": '1,2,3' })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('In')
+  expect(result.value.length).toBe(3)
+  expect(result.value[0]).toBe('1')
+  expect(result.value[1]).toBe('2')
+  expect(result.value[2]).toBe('3')
+
+  // .$notIn logic tests
+  result = parser._parseCondition({ "id.$notIn": '1,2,3' })
+  expect(result.field).toBe('id')
+  expect(result.condition).toBe('NotIn')
+  expect(result.value.length).toBe(3)
+  expect(result.value[0]).toBe('1')
+  expect(result.value[1]).toBe('2')
+  expect(result.value[2]).toBe('3')
+
+  // .$between logic tests
+  result = parser._parseCondition({ "age.$between": '18:30' })
+  expect(result.field).toBe('age')
+  expect(result.condition).toBe('Between')
+  expect(result.value.length).toBe(2)
+  expect(result.value[0]).toBe('18')
+  expect(result.value[1]).toBe('30')
+
+  // .$notBetween logic tests
+  result = parser._parseCondition({ "age.$notBetween": '18:30' })
+  expect(result.field).toBe('age')
+  expect(result.condition).toBe('NotBetween')
+  expect(result.value.length).toBe(2)
+  expect(result.value[0]).toBe('18')
+  expect(result.value[1]).toBe('30')
+
+  // .$null logic tests
+  result = parser._parseCondition({ "age.$null": null })
+  expect(result.field).toBe('age')
+  expect(result.condition).toBe('Null')
+  expect(result.value).toBe(null)
+
+  // .$notNull logic tests
+  result = parser._parseCondition({ "age.$notNull": null })
+  expect(result.field).toBe('age')
+  expect(result.condition).toBe('NotNull')
+  expect(result.value).toBe(null)
+
+  // .$or logic tests
+  result = parser._parseCondition({ "$or.age.$gt": 18 })
+  expect(result.prefix).toBe('or')
+  expect(result.field).toBe('age')
+  expect(result.condition).toBe('>')
+  expect(result.value).toBe(18)
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
