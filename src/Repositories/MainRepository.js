@@ -66,6 +66,9 @@ class MainRepository {
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
+    // User should be able to filter records
+    this.queryParser.applyWheres(query, conditions.q)
+
     // We should add this condition in here because of performance.
     query.where('id', params.id)
 

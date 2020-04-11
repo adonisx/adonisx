@@ -139,6 +139,7 @@ test('I should be able to get first record by route definition.', async () => {
   })
   dep.queryParser.applyFields = jest.fn(() => {})
   dep.queryParser.applySorting = jest.fn(() => {})
+  dep.queryParser.applyWheres = jest.fn(() => {})
 
   const repository = getInstance(dep)
   const result = await repository.firstOrFail(request, { userId: 1, id: 2 })
@@ -214,6 +215,7 @@ test('I should be able to get an error while trying to reach unfound record.', a
   })
   dep.queryParser.applyFields = jest.fn(() => {})
   dep.queryParser.applySorting = jest.fn(() => {})
+  dep.queryParser.applyWheres = jest.fn(() => {})
 
   const repository = getInstance(dep)
 
