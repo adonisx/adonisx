@@ -13,10 +13,9 @@ class MainRepository {
   }
 
   async paginate (request, params) {
-    console.log('paginate')
-    console.log(this.queryParser)
-    console.log(request.all())
-    console.log(JSON.stringify(request.all()))
+    // We should parse URL query string to use as condition in Lucid query
+    const conditions = this.queryParser.get(request.all())
+
     // Loading model
     const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
     const Model = this.repositoryHelper.getModel(modelPath)
@@ -29,7 +28,10 @@ class MainRepository {
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
 
     // Executing query
-    const result = await query.paginate(1, 10)
+    const result = await query.paginate(
+      conditions.page,
+      conditions.per_page
+    )
 
     // We should trigger onAfterPagination events
     await this.trigger.fire('onAfter', modelPath, 'paginate', { result })

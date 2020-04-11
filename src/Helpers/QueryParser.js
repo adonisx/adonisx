@@ -18,6 +18,12 @@ class QueryParser {
     }
   }
 
+  get (query) {
+    return this._parseSections(
+      this._getSections(query)
+    )
+  }
+
   _getSections (query) {
     if (typeof query !== 'object') {
       throw new Error('You have to send an object to get sections.')
@@ -53,11 +59,11 @@ class QueryParser {
     const value = parseInt(content)
 
     if (isNaN(value)) {
-      return null
+      return 1
     }
 
     if (value <= 0) {
-      return null
+      return 1
     }
 
     return value

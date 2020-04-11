@@ -76,8 +76,8 @@ test('I should be able to parse the page parameter', () => {
   expect(parser._parsePage('1')).toBe(1)
   expect(parser._parsePage('12')).toBe(12)
   expect(parser._parsePage('123')).toBe(123)
-  expect(parser._parsePage('ass')).toBe(null)
-  expect(parser._parsePage('-12')).toBe(null)
+  expect(parser._parsePage('ass')).toBe(1)
+  expect(parser._parsePage('-12')).toBe(1)
   expect(parser._parsePage(16)).toBe(16)
   expect(parser._parsePage(16.21)).toBe(16)
   expect(parser._parsePage('16.99')).toBe(16)
@@ -106,4 +106,11 @@ test('I should be able to parse all sections', () => {
   const result = parser._parseSections(sections)
   expect(result.page).toBe(1)
   expect(result.per_page).toBe(25)
+})
+
+test('I should be able to get query parsing result', () => {
+  const parser = new QueryParser()
+  const result = parser.get({})
+  expect(result.page).toBe(1)
+  expect(result.per_page).toBe(10)
 })
