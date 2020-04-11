@@ -44,6 +44,11 @@ class ApiXProvider extends ServiceProvider {
       )
     })
 
+    this.app.bind('APIX/Helpers/QueryParser', () => {
+      const QueryParser = require('./../src/Helpers/QueryParser')
+      return new QueryParser()
+    })
+
     this.app.singleton('APIX/Helpers/RouteHelper', () => {
       const RouteHelper = require('./../src/Helpers/RouteHelper')
       return new RouteHelper()
@@ -97,7 +102,8 @@ class ApiXProvider extends ServiceProvider {
         use('APIX/Helpers/ValidationHelper'),
         use('Route'),
         use('APIX/Helpers/TriggerHelper'),
-        use('APIX/Repositories/RepositoryHelper')
+        use('APIX/Repositories/RepositoryHelper'),
+        use('APIX/Helpers/QueryParser')
       )
     })
   }

@@ -21,41 +21,52 @@ test('I should be able to get an error when I send unacceptable query string', (
   expect(() => { parser._getSections(null) }).toThrow(Error)
   expect(() => { parser._getSections(1231) }).toThrow(Error)
   expect(() => { parser._getSections(1231.12) }).toThrow(Error)
-  expect(() => { parser._getSections({}) }).toThrow(Error)
+  expect(() => { parser._getSections('asdad') }).toThrow(Error)
 })
 
 test('I should be able to split queries to different sections', () => {
   const parser = new QueryParser()
-  const result = parser._getSections('q={"id": 10}&page=1&per_page=25&sort=-id&fields=id,name,surname&with=role')
-  
-  expect(result.q.length).toBe(1)
-  expect(result.sort.length).toBe(1)
-  expect(result.fields.length).toBe(1)
-  expect(result.with.length).toBe(1)
+  const query = {
+    q: '{"salary": {"$gt": 10000}}',
+    page: '1',
+    per_page: '25',
+    sort: '-id',
+    fields: 'id,name,surname',
+    with: 'posts'
+  }
+  const result = parser._getSections(query)
+  expect(result.q).not.toBe(null)
+  expect(result.sort).not.toBe(null)
+  expect(result.fields).not.toBe(null)
+  expect(result.with).not.toBe(null)
   expect(result.page).not.toBe(null)
   expect(result.per_page).not.toBe(null)
 })
 
 test('I should be able to split queries when I don`t send full sections', () => {
   const parser = new QueryParser()
-  const result = parser._getSections('')
+  const result = parser._getSections({})
   
-  expect(result.q.length).toBe(0)
-  expect(result.sort.length).toBe(0)
-  expect(result.fields.length).toBe(0)
-  expect(result.with.length).toBe(0)
+  expect(result.q).toBe(null)
+  expect(result.sort).toBe(null)
+  expect(result.fields).toBe(null)
+  expect(result.with).toBe(null)
   expect(result.page).toBe(null)
   expect(result.per_page).toBe(null)
 })
 
 test('I should be able to split queries when I don`t send partly sections', () => {
   const parser = new QueryParser()
-  const result = parser._getSections('page=1&fields=id,name')
+  const query = {
+    page: '1',
+    fields: 'id,name,surname'
+  }
+  const result = parser._getSections(query)
   
-  expect(result.q.length).toBe(0)
-  expect(result.sort.length).toBe(0)
-  expect(result.fields.length).toBe(1)
-  expect(result.with.length).toBe(0)
+  expect(result.q).toBe(null)
+  expect(result.sort).toBe(null)
+  expect(result.fields).not.toBe(null)
+  expect(result.with).toBe(null)
   expect(result.page).not.toBe(null)
   expect(result.per_page).toBe(null)
 })
@@ -85,12 +96,12 @@ test('I should be able to parse the per_page parameter', () => {
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
-    q: [ '{"id": 10}' ],
+    q: '{"id": 10}',
     page: '1',
     per_page: '25',
-    sort: [ '-id' ],
-    fields: [ 'id,name,surname' ],
-    with: [ 'role' ]
+    sort: '-id',
+    fields: 'id,name,surname',
+    with: 'role'
   }
   const result = parser._parseSections(sections)
   expect(result.page).toBe(1)

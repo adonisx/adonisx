@@ -4,14 +4,19 @@ const { capitalCase, snakeCase } = require('change-case')
 const HttpException = require('./../Exceptions/HttpException')
 
 class MainRepository {
-  constructor (validation, route, trigger, repositoryHelper) {
+  constructor (validation, route, trigger, repositoryHelper, queryParser) {
     this.validation = validation
     this.route = route
     this.trigger = trigger
     this.repositoryHelper = repositoryHelper
+    this.queryParser = queryParser
   }
 
   async paginate (request, params) {
+    console.log('paginate')
+    console.log(this.queryParser)
+    console.log(request.all())
+    console.log(JSON.stringify(request.all()))
     // Loading model
     const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
     const Model = this.repositoryHelper.getModel(modelPath)

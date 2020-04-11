@@ -19,31 +19,25 @@ class QueryParser {
   }
 
   _getSections (query) {
-    if (typeof query !== 'string') {
-      throw new Error('You have to send a string to get query sections')
+    if (typeof query !== 'object') {
+      throw new Error('You have to send an object to get sections.')
     }
 
     const sections = {
-      q: [],
+      q: null,
       page: null,
       per_page: null,
-      sort: [],
-      fields: [],
-      with: []
+      sort: null,
+      fields: null,
+      with: null
     }
 
-    for (const row of query.split('&')) {
-      const [ key, value ] = row.split('=')
-
+    for (const key of Object.keys(query)) {
       if (sections[key] === undefined) {
         continue;
       }
 
-      if (Array.isArray(sections[key])) {
-        sections[key].push(value)
-      } else {
-        sections[key] = value
-      }
+      sections[key] = query[key]
     }
 
     return sections
