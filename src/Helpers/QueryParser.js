@@ -209,6 +209,8 @@ class QueryParser {
       where.value = null
     }
 
+    this._shouldBeAcceptableColumn(where.field)
+
     return where
   }
 
@@ -236,6 +238,10 @@ class QueryParser {
     const regex = /^[a-zA-Z_.]+$/
     if (!field.match(regex)) {
       throw new Error(`Unacceptable field name: ${field}`)
+    }
+
+    if (field.indexOf('.') === field.length - 1) {
+      throw new Error(`You have to define the column specefically: ${field}`)
     }
 }
 }

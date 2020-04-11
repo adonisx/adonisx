@@ -281,6 +281,13 @@ test('I should be able to parse recursive queries', () => {
   expect(result[1][1].field).toBe('age')
 })
 
+test('I should be not able to add unacceptable field to query', () => {
+  const parser = new QueryParser()
+  expect(() => { parser._parseCondition({ "full-name": "Özgür" }) }).toThrow(Error)
+  expect(() => { parser._parseCondition({ "name$": "Özgür" }) }).toThrow(Error)
+  expect(() => { parser._parseCondition({ "name.": "Özgür" }) }).toThrow(Error)
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
