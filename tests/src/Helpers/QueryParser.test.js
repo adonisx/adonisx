@@ -408,7 +408,7 @@ test('I should be able to apply recursive conditions', () => {
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
-    q: { "id": 10 },
+    q: '{"id":10}',
     page: '1',
     per_page: '25',
     sort: 'id,-name',

@@ -36,6 +36,11 @@ class QueryParser {
   }
 
   applyWheres (query, ruleSet) {
+    // If there is not any query, we don't have to filter the data.
+    if (!ruleSet) {
+      return
+    }
+
     if (Array.isArray(ruleSet)) {
       for (const item of ruleSet) {
         // If the item is not an array, it means that it is a standard condition
@@ -107,6 +112,10 @@ class QueryParser {
   }
 
   _parseSections (sections) {
+    if (sections.q) {
+      sections.q = JSON.parse(sections.q)
+    }
+
     sections.page = this._parsePage(sections.page)
     sections.per_page = this._parsePerPage(sections.per_page)
     sections.fields = this._parseFields(sections.fields)

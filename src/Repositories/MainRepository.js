@@ -15,7 +15,6 @@ class MainRepository {
   async paginate (request, params) {
     // We should parse URL query string to use as condition in Lucid query
     const conditions = this.queryParser.get(request.all())
-    console.log(conditions)
 
     // Loading model
     const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
@@ -28,6 +27,9 @@ class MainRepository {
     this.queryParser.applyFields(query, conditions.fields)
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
+
+    // User should be able to filter records
+    this.queryParser.applyWheres(query, conditions.q)
 
     // We should trigger onBeforePagination events
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })

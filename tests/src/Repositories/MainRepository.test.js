@@ -65,6 +65,7 @@ test('I should be able to paginate by route definition.', async () => {
   })
   dep.queryParser.applyFields = jest.fn(() => {})
   dep.queryParser.applySorting = jest.fn(() => {})
+  dep.queryParser.applyWheres = jest.fn(() => {})
 
   const repository = getInstance(dep)
   const result = await repository.paginate(request, { userId: 1 })
