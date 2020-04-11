@@ -93,6 +93,30 @@ test('I should be able to parse the per_page parameter', () => {
   expect(parser._parsePerPage(110)).toBe(100)
 })
 
+test('I should be able to parse the fields', () => {
+  const parser = new QueryParser()
+  let result =  parser._parseFields('id,email')
+  expect(result.length).toBe(2)
+  expect(result[0]).toBe('id')
+  expect(result[1]).toBe('email')
+
+  result =  parser._parseFields('id')
+  expect(result.length).toBe(1)
+  expect(result[0]).toBe('id')
+})
+
+test('I should be able to get an error while parsing unacceptable column name', () => {
+  const parser = new QueryParser()
+  // Acceptable exceptions
+  expect(parser._parseFields('full_name').length).toBe(1)
+  expect(parser._parseFields('id,users.name').length).toBe(2)
+  expect(parser._parseFields('*')).toBe('*')
+  // Unacceptable error testing
+  expect(() => { parser._parseFields('id,email|sample') }).toThrow(Error)
+  expect(() => { parser._parseFields('id,email?sample') }).toThrow(Error)
+  expect(() => { parser._parseFields('id,full-name') }).toThrow(Error)
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
@@ -104,8 +128,16 @@ test('I should be able to parse all sections', () => {
     with: 'role'
   }
   const result = parser._parseSections(sections)
+
+  // Pagination options
   expect(result.page).toBe(1)
   expect(result.per_page).toBe(25)
+
+  // Field selections
+  expect(result.fields.length).toBe(3)
+  expect(result.fields[0]).toBe('id')
+  expect(result.fields[1]).toBe('name')
+  expect(result.fields[2]).toBe('surname')
 })
 
 test('I should be able to get query parsing result', () => {

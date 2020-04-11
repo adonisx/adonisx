@@ -52,6 +52,7 @@ class QueryParser {
   _parseSections (sections) {
     sections.page = this._parsePage(sections.page)
     sections.per_page = this._parsePerPage(sections.per_page)
+    sections.fields = this._parseFields(sections.fields)
     return sections
   }
 
@@ -85,6 +86,26 @@ class QueryParser {
     }
 
     return value
+  }
+
+  _parseFields (content) {
+    if (!content) {
+      return []
+    }
+
+    // User should be able to select "all" fields.
+    if (content.trim() === '*') {
+      return '*'
+    }
+
+    const fields = content.split(',')
+    const regex = /^[a-zA-Z_.]+$/
+    fields.forEach(field => {
+      if (!field.match(regex)) {
+        throw new Error(`Unacceptable field name: ${field}`)
+      }
+    })
+    return fields
   }
 }
 

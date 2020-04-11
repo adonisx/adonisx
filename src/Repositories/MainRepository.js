@@ -24,6 +24,11 @@ class MainRepository {
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
+    // Users should be able to select some fields to show.
+    if (conditions.fields.length > 0 && conditions.fields !== '*') {
+      query.select(conditions.fields)
+    }
+
     // We should trigger onBeforePagination events
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
 
