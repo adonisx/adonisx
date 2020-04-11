@@ -5,7 +5,8 @@ const getDependencies = () => {
     validation: {},
     route: {},
     trigger: {},
-    repositoryHelper: {}
+    repositoryHelper: {},
+    queryParser: {}
   }))
 }
 
@@ -14,7 +15,8 @@ const getInstance = (dep) => {
     dep.validation,
     dep.route,
     dep.trigger,
-    dep.repositoryHelper
+    dep.repositoryHelper,
+    dep.queryParser
   )
 }
 
@@ -41,6 +43,7 @@ test('I should be able to paginate by route definition.', async () => {
 
   // Request mock
   const request = getRequest()
+  request.all = jest.fn(() => {})
 
   // Constructer mocks
   const dep = getDependencies()
@@ -52,6 +55,16 @@ test('I should be able to paginate by route definition.', async () => {
   })
   dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
   dep.trigger.fire = jest.fn(() => {})
+  dep.queryParser.get = jest.fn(() => {
+    return {
+      page: 3,
+      per_page: 25,
+      fields: null,
+      sort: null
+    }
+  })
+  dep.queryParser.applyFields = jest.fn(() => {})
+  dep.queryParser.applySorting = jest.fn(() => {})
 
   const repository = getInstance(dep)
   const result = await repository.paginate(request, { userId: 1 })
@@ -79,8 +92,8 @@ test('I should be able to paginate by route definition.', async () => {
   expect(dep.trigger.fire.mock.calls[1][3].result).toBe('PaginationResult')
 
   expect(query.paginate.mock.calls.length).toBe(1)
-  expect(query.paginate.mock.calls[0][0]).toBe(1)
-  expect(query.paginate.mock.calls[0][1]).toBe(10)
+  expect(query.paginate.mock.calls[0][0]).toBe(3)
+  expect(query.paginate.mock.calls[0][1]).toBe(25)
 
   expect(result).toBe('PaginationResult')
 })
@@ -101,6 +114,7 @@ test('I should be able to get first record by route definition.', async () => {
   // Request mock
   const request = getRequest()
   request.apix.url = 'api/users/1/posts/2'
+  request.all = jest.fn(() => {})
 
   // Constructer mocks
   const dep = getDependencies()
@@ -112,6 +126,18 @@ test('I should be able to get first record by route definition.', async () => {
   })
   dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
   dep.trigger.fire = jest.fn(() => {})
+
+  // Query parser mocks
+  dep.queryParser.get = jest.fn(() => {
+    return {
+      page: 3,
+      per_page: 25,
+      fields: null,
+      sort: null
+    }
+  })
+  dep.queryParser.applyFields = jest.fn(() => {})
+  dep.queryParser.applySorting = jest.fn(() => {})
 
   const repository = getInstance(dep)
   const result = await repository.firstOrFail(request, { userId: 1, id: 2 })
@@ -163,6 +189,7 @@ test('I should be able to get an error while trying to reach unfound record.', a
   // Request mock
   const request = getRequest()
   request.apix.url = 'api/users/1/posts/2'
+  request.all = jest.fn(() => {})
 
   // Constructer mocks
   const dep = getDependencies()
@@ -177,6 +204,15 @@ test('I should be able to get an error while trying to reach unfound record.', a
   })
   dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
   dep.trigger.fire = jest.fn(() => {})
+
+  dep.queryParser.get = jest.fn(() => {
+    return {
+      fields: null,
+      sort: null
+    }
+  })
+  dep.queryParser.applyFields = jest.fn(() => {})
+  dep.queryParser.applySorting = jest.fn(() => {})
 
   const repository = getInstance(dep)
 
