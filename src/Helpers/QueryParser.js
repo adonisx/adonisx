@@ -162,6 +162,10 @@ class QueryParser {
   }
 
   _parseCondition (content) {
+    if (Array.isArray(content)) {
+      return this._parseConditions(content)
+    }
+
     const where = {
       prefix: null,
       field: null,

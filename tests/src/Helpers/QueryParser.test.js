@@ -258,6 +258,29 @@ test('I should be able to parsing all conditions', () => {
   expect(result[1].value).toBe('Işıklı')
 })
 
+test('I should be able to parse recursive queries', () => {
+  const parser = new QueryParser()
+  let result = parser._parseConditions([
+    [
+      { "name": "Özgür" },
+      { "$or.surname": "Işıklı" }
+    ],
+    [
+      { "$or.id.$gt": 1 },
+      { "age.$gt": 18 }
+    ]
+  ])
+
+  expect(result.length).toBe(2)
+  expect(result[0].length).toBe(2)
+  expect(result[0][0].field).toBe('name')
+  expect(result[0][1].field).toBe('surname')
+
+  expect(result[1].length).toBe(2)
+  expect(result[1][0].field).toBe('id')
+  expect(result[1][1].field).toBe('age')
+})
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
