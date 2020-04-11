@@ -35,10 +35,50 @@ class QueryParser {
     })
   }
 
+  applyWheres (query, ruleSet) {
+    if (Array.isArray(ruleSet)) {
+      for (const item of ruleSet) {
+        // If the item is not an array, it means that it is a standard condition
+        if (Array.isArray(item) === false) {
+          this._applyConditionRule(query, item)
+        } else {
+          // If the item is an array, we should create the query recursively.
+          if (item[0].prefix === 'or') {
+            query.orWhere((sub) => {
+              this.applyWheres(sub, item)
+            })
+          } else {
+            query.where((sub) => {
+              this.applyWheres(sub, item)
+            })
+          }
+        }
+      }
+    } else {
+      this._applyConditionRule(query, ruleSet)
+    }
+  }
+
   get (query) {
     return this._parseSections(
       this._getSections(query)
     )
+  }
+
+  _applyConditionRule (query, ruleSet) {
+    const method = this._getConditionMethodName(ruleSet)
+    const zeroArguments = ['Null', 'NotNull']
+    const oneArguments = ['In', 'NotIn', 'Between', 'NotBetween']
+
+    if (zeroArguments.indexOf(ruleSet.condition) > -1) {
+      return query[`${method}${ruleSet.condition}`](ruleSet.field)
+    }
+
+    if (oneArguments.indexOf(ruleSet.condition) > -1) {
+      return query[`${method}${ruleSet.condition}`](ruleSet.field, ruleSet.value)
+    }
+
+    return query[method](ruleSet.field, ruleSet.condition, ruleSet.value)
   }
 
   _getSections (query) {
@@ -71,6 +111,7 @@ class QueryParser {
     sections.per_page = this._parsePerPage(sections.per_page)
     sections.fields = this._parseFields(sections.fields)
     sections.sort = this._parseSortingOptions(sections.sort)
+    sections.q = this._parseCondition(sections.q)
     return sections
   }
 
@@ -166,6 +207,10 @@ class QueryParser {
       return this._parseConditions(content)
     }
 
+    if (!content) {
+      return null
+    }
+
     const where = {
       prefix: null,
       field: null,
@@ -220,6 +265,13 @@ class QueryParser {
       where.field = where.field.replace(structure, '')
       where.condition = condition
     }
+  }
+
+  _getConditionMethodName (ruleSet) {
+    if (ruleSet.prefix === 'or') {
+      return 'orWhere'
+    }
+    return 'where'
   }
 
   _hasSpecialStructure (field, structure) {
