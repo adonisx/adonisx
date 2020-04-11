@@ -268,6 +268,69 @@ class QueryParser {
     return where
   }
 
+  _parseWithSections (content) {
+    return content.split(',')
+  }
+
+  _parseWith (items) {
+    const result = []
+    for (const item of items) {
+      let relationship = item
+      let fields = []
+      let children = []
+
+      let columnIndex = relationship.indexOf('{')
+      if (columnIndex > -1) {
+        // console.log('relationship', relationship)
+        // console.log('split', relationship.substr(columnIndex + 1, relationship.length - columnIndex - 2))
+        fields = this._splitWithRecursive(relationship.substr(columnIndex + 1, relationship.length - columnIndex - 2))
+
+        relationship = relationship.substr(0, columnIndex)
+      }
+
+      // We are checking there is any children
+      children = fields.filter(field => field.indexOf('{') > -1 || field.indexOf('.') > -1)
+
+      // Field list shouldn't have any related table
+      fields = fields.filter(field => field.indexOf('{') === -1 && field.indexOf('.') === -1)
+
+      // We should calculate recursivly all of childre
+      children = this._parseWith(children)
+
+      result.push({
+        relationship,
+        fields,
+        children
+      })
+    }
+    return result
+  }
+
+  _splitWithRecursive (content) {
+    const result = []
+    let startAt = 0
+    let subcounter = 0
+    for (let position = 0; position < content.length; position++) {
+      const current = content[position]
+
+      if (current === '{') {
+        subcounter++
+      }
+
+      if (current === '}') {
+        subcounter--
+      }
+
+      if (current === '|' && subcounter === 0) {
+        result.push(content.substr(startAt, position - startAt))
+        startAt = position + 1
+      }
+    }
+
+    result.push(content.substr(startAt))
+    return result
+  }
+
   _applySpecialCondition (where, structure, condition) {
     structure = `.${structure}`
     if (this._hasSpecialStructure(where.field, structure)) {

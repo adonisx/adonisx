@@ -405,6 +405,85 @@ test('I should be able to apply recursive conditions', () => {
   expect(sub2.where.mock.calls[0][2]).toBe(18)
 })
 
+test('I should be able to parse with to sections', () => {
+  const parser = new QueryParser()
+  // posts{title|name},user.tokens{id,secret},users{id,name,surname,token{id,secret}}
+  expect(parser._parseWithSections('posts').length).toBe(1)
+  expect(parser._parseWithSections('posts,users').length).toBe(2)
+  expect(parser._parseWithSections('post{id|title},user{name}').length).toBe(2)
+  expect(parser._parseWithSections('post{title|created_at},user{name}').length).toBe(2)
+  expect(parser._parseWithSections('post{id|title|created_at}').length).toBe(1)
+  expect(parser._parseWithSections('post{id|title|comments{title}},users.email').length).toBe(2)
+})
+
+test('I should be able to parse with to sections', () => {
+  let result = null
+  const parser = new QueryParser()
+  expect(parser._parseWith(['posts', 'users']).length).toBe(2)
+  expect(parser._parseWith(['post.comments']).length).toBe(1)
+
+  result = parser._parseWith(['post{id|title}'])
+  expect(result.length).toBe(1)
+  expect(result[0].relationship).toBe('post')
+  expect(result[0].fields.length).toBe(2)
+  expect(result[0].fields[0]).toBe('id')
+  expect(result[0].fields[1]).toBe('title')
+  expect(result[0].children.length).toBe(0)
+
+  result = parser._parseWith(['post{id|title}', 'users'])
+  expect(result.length).toBe(2)
+  expect(result[0].relationship).toBe('post')
+  expect(result[0].fields.length).toBe(2)
+  expect(result[0].children.length).toBe(0)
+
+  expect(result[1].relationship).toBe('users')
+  expect(result[1].fields.length).toBe(0)
+  expect(result[1].children.length).toBe(0)
+
+  result = parser._parseWith(['post{id|title|comments{title}}'])
+  expect(result.length).toBe(1)
+  expect(result[0].relationship).toBe('post')
+  expect(result[0].fields.length).toBe(2)
+  expect(result[0].children.length).toBe(1)
+  expect(result[0].children[0].relationship).toBe('comments')
+  expect(result[0].children[0].fields.length).toBe(1)
+  expect(result[0].children[0].fields[0]).toBe('title')
+  expect(result[0].children[0].children.length).toBe(0)
+
+  result = parser._parseWith(['post{id|comments{id|reports{id}}}'])
+  expect(result.length).toBe(1)
+  expect(result[0].relationship).toBe('post')
+  expect(result[0].children.length).toBe(1)
+  expect(result[0].children[0].relationship).toBe('comments')
+  expect(result[0].children[0].children.length).toBe(1)
+  expect(result[0].children[0].children[0].relationship).toBe('reports')
+  expect(result[0].children[0].children[0].fields.length).toBe(1)
+  expect(result[0].children[0].children[0].fields[0]).toBe('id')
+})
+
+test('I should be able to split with recursive string', () => {
+  const parser = new QueryParser()
+  let result = parser._splitWithRecursive('id|comments{id|reports{id}}')
+  expect(result.length).toBe(2)
+  expect(result[0]).toBe('id')
+  expect(result[1]).toBe('comments{id|reports{id}}')
+
+  result = parser._splitWithRecursive('id')
+  expect(result.length).toBe(1)
+  expect(result[0]).toBe('id')
+
+  result = parser._splitWithRecursive('id|comments')
+  expect(result.length).toBe(2)
+  expect(result[0]).toBe('id')
+  expect(result[1]).toBe('comments')
+
+  result = parser._splitWithRecursive('id|comments{id|reports{id|user{id|name|email}}}')
+  expect(result.length).toBe(2)
+  expect(result[0]).toBe('id')
+  expect(result[1]).toBe('comments{id|reports{id|user{id|name|email}}}')
+})
+
+
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
