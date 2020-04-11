@@ -407,7 +407,6 @@ test('I should be able to apply recursive conditions', () => {
 
 test('I should be able to parse with to sections', () => {
   const parser = new QueryParser()
-  // posts{title|name},user.tokens{id,secret},users{id,name,surname,token{id,secret}}
   expect(parser._parseWithSections('posts').length).toBe(1)
   expect(parser._parseWithSections('posts,users').length).toBe(2)
   expect(parser._parseWithSections('post{id|title},user{name}').length).toBe(2)
@@ -483,7 +482,6 @@ test('I should be able to split with recursive string', () => {
   expect(result[1]).toBe('comments{id|reports{id|user{id|name|email}}}')
 })
 
-
 test('I should be able to parse all sections', () => {
   const parser = new QueryParser(options)
   const sections = {
@@ -492,7 +490,7 @@ test('I should be able to parse all sections', () => {
     per_page: '25',
     sort: 'id,-name',
     fields: 'id,name,surname',
-    with: 'role'
+    with: 'users{id|posts{title}}'
   }
   const result = parser._parseSections(sections)
 
@@ -518,6 +516,11 @@ test('I should be able to parse all sections', () => {
   expect(result.q.field).toBe('id')
   expect(result.q.condition).toBe('=')
   expect(result.q.value).toBe(10)
+
+  // With selections
+  expect(result.with.length).toBe(1)
+  expect(result.with[0].relationship).toBe('users')
+  expect(result.with[0].children[0].relationship).toBe('posts')
 })
 
 test('I should be able to get query parsing result', () => {

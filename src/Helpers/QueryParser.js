@@ -121,6 +121,7 @@ class QueryParser {
     sections.fields = this._parseFields(sections.fields)
     sections.sort = this._parseSortingOptions(sections.sort)
     sections.q = this._parseCondition(sections.q)
+    sections.with = this._parseWith(this._parseWithSections(sections.with))
     return sections
   }
 
@@ -269,6 +270,9 @@ class QueryParser {
   }
 
   _parseWithSections (content) {
+    if (!content) {
+      return []
+    }
     return content.split(',')
   }
 
