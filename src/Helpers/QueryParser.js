@@ -19,6 +19,10 @@ class QueryParser {
   }
 
   _getSections (query) {
+    if (typeof query !== 'string') {
+      throw new Error('You have to send a string to get query sections')
+    }
+
     const sections = {
       q: [],
       page: null,

@@ -16,6 +16,14 @@ test('I should be able to see an error when I try to set unacceptable options', 
   expect(() => { new QueryParser({ max_per_page: 'xxx' }) }).toThrow(Error)
 })
 
+test('I should be able to get an error when I send unacceptable query string', () => {
+  const parser = new QueryParser()
+  expect(() => { parser._getSections(null) }).toThrow(Error)
+  expect(() => { parser._getSections(1231) }).toThrow(Error)
+  expect(() => { parser._getSections(1231.12) }).toThrow(Error)
+  expect(() => { parser._getSections({}) }).toThrow(Error)
+})
+
 test('I should be able to split queries to different sections', () => {
   const parser = new QueryParser()
   const result = parser._getSections('q={"id": 10}&page=1&per_page=25&sort=-id&fields=id,name,surname&with=role')
