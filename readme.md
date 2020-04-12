@@ -443,7 +443,7 @@ In order to get related models in pagination or show methods, you may use follow
 }
 ```
 
-##### 4.5.2. Recursive Relationships
+##### 4.5.3. Recursive Relationships
 
 ```
 /api/users?with=posts{id|user_id|title|comments{id|post_id|content}}
