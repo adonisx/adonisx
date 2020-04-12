@@ -28,8 +28,11 @@ class MainRepository {
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
-    // User should be able to filter records
+    // Users should be able to filter records
     this.queryParser.applyWheres(query, conditions.q)
+
+    // Users should be able to add relationships to the query
+    this.queryParser.applyRelations(query, conditions.with)
 
     // We should trigger onBeforePagination events
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
@@ -66,8 +69,11 @@ class MainRepository {
 
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
-    // User should be able to filter records
+    // Users should be able to filter records
     this.queryParser.applyWheres(query, conditions.q)
+
+    // Users should be able to add relationships to the query
+    this.queryParser.applyRelations(query, conditions.with)
 
     // We should add this condition in here because of performance.
     query.where('id', params.id)
