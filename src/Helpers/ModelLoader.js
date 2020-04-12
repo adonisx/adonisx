@@ -19,17 +19,17 @@ class ModelLoader {
     return this.use(`App/Models/${file.replace('.js', '')}`)
   }
 
-  getInstance (model) {
-    return new model()
+  getInstance (Model) {
+    return new Model()
   }
 
   getModelRelationMethods (instance) {
-    let properties = new Set()
+    const properties = new Set()
     let currentObj = instance
     do {
       Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
     } while ((currentObj = Object.getPrototypeOf(currentObj)))
-  
+
     const defaultMethods = [
       'constructor',
       '_formatDateFields',
@@ -73,7 +73,7 @@ class ModelLoader {
       'valueOf',
       'toLocaleString'
     ]
-  
+
     return [...properties.keys()]
       .filter(item => typeof instance[item] === 'function')
       .filter(item => defaultMethods.indexOf(item) === -1)

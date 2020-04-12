@@ -9,7 +9,7 @@ test('Validation helper should throw validation exception when it fails', async 
   const validateAll = jest.fn(async () => {
     return validation
   })
-  const helper = new ValidationHelper(validateAll, Error)  
+  const helper = new ValidationHelper(validateAll, Error)
 
   try {
     await helper.validate('inputs', 'rules')
@@ -27,6 +27,6 @@ test('Validation helper shouldn\'t throw an exception when it is validated', asy
   const validateAll = jest.fn(async () => {
     return validation
   })
-  const helper = new ValidationHelper(validateAll, Error)  
+  const helper = new ValidationHelper(validateAll, Error)
   await helper.validate('inputs', 'rules')
 })

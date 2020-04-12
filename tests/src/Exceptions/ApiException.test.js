@@ -14,4 +14,3 @@ test('I should be create a ApiException with status code.', () => {
     expect(error.status).toBe(406)
   }
 })
-

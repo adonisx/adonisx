@@ -10,7 +10,7 @@ class ExceptionHandler extends BaseExceptionHandler {
         error
       })
     }
-    
+
     if (error.name === 'ValidationException') {
       return response
         .status(400)
@@ -37,7 +37,6 @@ class ExceptionHandler extends BaseExceptionHandler {
 
     return super.handle(...arguments)
   }
-
 }
 
 module.exports = ExceptionHandler

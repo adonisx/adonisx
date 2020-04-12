@@ -35,7 +35,7 @@ class IdFilter {
       url = url.replace(`/${params[key]}`, `/:${key}`)
     }
     url = url.replace('/:id', '')
-    
+
     // We want to use this data in controller
     request.apix = {
       url,
@@ -47,7 +47,7 @@ class IdFilter {
     const sections = request.apix.url
       .replace('/api/', '')
       .split('/')
-      .filter(item => item !== ':id' && item.indexOf(':') > -1)    
+      .filter(item => item !== ':id' && item.indexOf(':') > -1)
     if (sections.length > 0) {
       request.apix.parent_column = sections[sections.length - 1].replace(':', '')
     }

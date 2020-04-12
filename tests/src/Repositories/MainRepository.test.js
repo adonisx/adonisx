@@ -236,7 +236,6 @@ test('I should be able to get an error while trying to reach unfound record.', a
   expect(exceptionName).toBe('HttpException')
 })
 
-
 test('I should be able to create a record by route definition.', async () => {
   // Model mock
   const query = {}

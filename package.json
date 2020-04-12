@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:dev": "jest --watch",
-    "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{js,jsx}"
+    "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{js,jsx}",
+    "lint": "eslint ."
   },
   "author": "Özgür Adem Işıklı <i.ozguradem@gmail.com>",
   "license": "MIT",
@@ -23,11 +24,16 @@
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/fold": "^4.0.9",
     "@adonisjs/ignitor": "^2.0.8",
-    "mysql": "^2.18.1",
     "pluralize": "^8.0.0",
     "change-case": "^4.1.1"
   },
   "devDependencies": {
-    "jest": "^25.2.7"
+    "jest": "^25.2.7",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
   }
 }

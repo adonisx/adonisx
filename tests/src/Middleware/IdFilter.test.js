@@ -5,7 +5,7 @@ test('I should be able to set matched url', async () => {
   const params = {
     userId: 1
   }
- 
+
   request.url = jest.fn(() => {
     return '/api/users/1/posts'
   })
@@ -23,7 +23,7 @@ test('I should be able to set parent columns', async () => {
       url: '/api/users/:userId/posts'
     }
   }
- 
+
   const filter = new IdFilter()
   filter._setParentColumns(request)
   expect(request.apix.parent_column).toBe('userId')
@@ -35,7 +35,7 @@ test('I should be able to set multiple parent columns', async () => {
       url: '/api/users/:userId/posts/:postId/comments'
     }
   }
- 
+
   const filter = new IdFilter()
   filter._setParentColumns(request)
   expect(request.apix.parent_column).toBe('postId')

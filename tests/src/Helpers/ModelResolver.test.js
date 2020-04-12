@@ -39,7 +39,7 @@ test('Model resolver should resolve all model relations', () => {
   treeMapper.create.mockReturnValueOnce('MyTree')
 
   const resolver = new ModelResolver(modelLoader, treeMapper)
-  const result = resolver.get()
+  resolver.get()
 
   expect(modelLoader.getFiles.mock.calls.length).toBe(1)
   expect(modelLoader.getModel.mock.calls.length).toBe(2)

@@ -30,7 +30,7 @@ test('Tree mapper should create a recursive tree by map', () => {
   ]
   const mapper = new TreeMapper()
   const tree = mapper.create(map)
-  
+
   expect(tree.length).toBe(3)
   expect(tree[0].model).toBe('User')
   expect(tree[0].children.length).toBe(1)
@@ -38,4 +38,3 @@ test('Tree mapper should create a recursive tree by map', () => {
   expect(tree[0].children[0].children.length).toBe(1)
   expect(tree[0].children[0].children[0].model).toBe('PostComment')
 })
-

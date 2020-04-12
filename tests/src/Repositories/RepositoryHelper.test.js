@@ -10,7 +10,7 @@ test('RepositoryHelper should be able to get model path when I have an url for i
 
   const helper = new RepositoryHelper(routeHelper)
   const path = helper.getModelPath('api/users')
-  
+
   expect(path).toBe('App/Models/User')
   expect(routeHelper.get.mock.calls.length).toBe(1)
   expect(routeHelper.get.mock.calls[0][0]).toBe('api/users')
@@ -23,7 +23,7 @@ test('RepositoryHelper should be able to not add parent id condition if we do no
 
   const helper = new RepositoryHelper(routeHelper)
   helper.addParentIdCondition(query, {}, null)
-  
+
   expect(query.where.mock.calls.length).toBe(0)
 })
 
@@ -34,7 +34,7 @@ test('RepositoryHelper should be able to add parent id condition if we have.', (
 
   const helper = new RepositoryHelper(routeHelper)
   helper.addParentIdCondition(query, { userId: 1 }, 'userId')
-  
+
   expect(query.where.mock.calls.length).toBe(1)
   expect(query.where.mock.calls[0][0]).toBe('user_id')
   expect(query.where.mock.calls[0][1]).toBe(1)
@@ -49,7 +49,7 @@ test('I should be able to model name.', () => {
   })
   const helper = new RepositoryHelper(routeHelper)
   const name = helper.getModelName('api/users')
-  
+
   expect(routeHelper.get.mock.calls.length).toBe(1)
   expect(routeHelper.get.mock.calls[0][0]).toBe('api/users')
   expect(name).toBe('User')

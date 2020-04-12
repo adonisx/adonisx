@@ -10,6 +10,7 @@ test('I should be able to override basic options', () => {
 })
 
 test('I should be able to see an error when I try to set unacceptable options', () => {
+  /* eslint-disable no-new */
   expect(() => { new QueryParser({ min_per_page: -10 }) }).toThrow(Error)
   expect(() => { new QueryParser({ max_per_page: 100000 }) }).toThrow(Error)
   expect(() => { new QueryParser({ min_per_page: 'xxx' }) }).toThrow(Error)
@@ -46,7 +47,7 @@ test('I should be able to split queries to different sections', () => {
 test('I should be able to split queries when I don`t send full sections', () => {
   const parser = new QueryParser()
   const result = parser._getSections({})
-  
+
   expect(result.q).toBe(null)
   expect(result.sort).toBe(null)
   expect(result.fields).toBe(null)
@@ -62,7 +63,7 @@ test('I should be able to split queries when I don`t send partly sections', () =
     fields: 'id,name,surname'
   }
   const result = parser._getSections(query)
-  
+
   expect(result.q).toBe(null)
   expect(result.sort).toBe(null)
   expect(result.fields).not.toBe(null)
@@ -95,12 +96,12 @@ test('I should be able to parse the per_page parameter', () => {
 
 test('I should be able to parse the fields', () => {
   const parser = new QueryParser()
-  let result =  parser._parseFields('id,email')
+  let result = parser._parseFields('id,email')
   expect(result.length).toBe(2)
   expect(result[0]).toBe('id')
   expect(result[1]).toBe('email')
 
-  result =  parser._parseFields('id')
+  result = parser._parseFields('id')
   expect(result.length).toBe(1)
   expect(result[0]).toBe('id')
 })
@@ -119,7 +120,7 @@ test('I should be able to get an error while parsing unacceptable column name', 
 
 test('I should be able to parsing sorting options', () => {
   const parser = new QueryParser()
-  let result = parser._parseSortingOptions('id,-name,+surname')
+  const result = parser._parseSortingOptions('id,-name,+surname')
   expect(result.length).toBe(3)
   expect(result[0].field).toBe('id')
   expect(result[0].type).toBe('ASC')
@@ -134,62 +135,62 @@ test('I should be able to get an error while parsing unacceptable column in sort
   expect(parser._parseSortingOptions('id,full_name')[1].field).toBe('full_name')
   expect(() => { parser._parseSortingOptions('id,full-name') }).toThrow(Error)
   expect(() => { parser._parseSortingOptions('id,full+name') }).toThrow(Error)
-  expect(() => { parser._parseSortingOptions('id,fullname12') }).toThrow(Error) 
+  expect(() => { parser._parseSortingOptions('id,fullname12') }).toThrow(Error)
 })
 
 test('I should be able to parsing query condition', () => {
   const parser = new QueryParser()
 
   // Simple query
-  let result = parser._parseCondition({ "name": "Özgür" })
+  let result = parser._parseCondition({ name: 'Özgür' })
   expect(result.field).toBe('name')
   expect(result.condition).toBe('=')
   expect(result.value).toBe('Özgür')
 
   // .$not logic tests
-  result = parser._parseCondition({ "id.$not": 1 })
+  result = parser._parseCondition({ 'id.$not': 1 })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('<>')
   expect(result.value).toBe(1)
 
   // .$gt logic tests
-  result = parser._parseCondition({ "id.$gt": 1 })
+  result = parser._parseCondition({ 'id.$gt': 1 })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('>')
   expect(result.value).toBe(1)
 
   // .$gte logic tests
-  result = parser._parseCondition({ "id.$gte": 1 })
+  result = parser._parseCondition({ 'id.$gte': 1 })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('>=')
   expect(result.value).toBe(1)
 
   // .$lt logic tests
-  result = parser._parseCondition({ "id.$lt": 1 })
+  result = parser._parseCondition({ 'id.$lt': 1 })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('<')
   expect(result.value).toBe(1)
 
   // .$lte logic tests
-  result = parser._parseCondition({ "id.$lte": 1 })
+  result = parser._parseCondition({ 'id.$lte': 1 })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('<=')
   expect(result.value).toBe(1)
 
   // .$like logic tests
-  result = parser._parseCondition({ "name.$like": 'John%' })
+  result = parser._parseCondition({ 'name.$like': 'John%' })
   expect(result.field).toBe('name')
   expect(result.condition).toBe('LIKE')
   expect(result.value).toBe('John%')
 
   // .$notLike logic tests
-  result = parser._parseCondition({ "name.$notLike": 'John%' })
+  result = parser._parseCondition({ 'name.$notLike': 'John%' })
   expect(result.field).toBe('name')
   expect(result.condition).toBe('NOT LIKE')
   expect(result.value).toBe('John%')
 
   // .$in logic tests
-  result = parser._parseCondition({ "id.$in": '1,2,3' })
+  result = parser._parseCondition({ 'id.$in': '1,2,3' })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('In')
   expect(result.value.length).toBe(3)
@@ -198,7 +199,7 @@ test('I should be able to parsing query condition', () => {
   expect(result.value[2]).toBe('3')
 
   // .$notIn logic tests
-  result = parser._parseCondition({ "id.$notIn": '1,2,3' })
+  result = parser._parseCondition({ 'id.$notIn': '1,2,3' })
   expect(result.field).toBe('id')
   expect(result.condition).toBe('NotIn')
   expect(result.value.length).toBe(3)
@@ -207,7 +208,7 @@ test('I should be able to parsing query condition', () => {
   expect(result.value[2]).toBe('3')
 
   // .$between logic tests
-  result = parser._parseCondition({ "age.$between": '18:30' })
+  result = parser._parseCondition({ 'age.$between': '18:30' })
   expect(result.field).toBe('age')
   expect(result.condition).toBe('Between')
   expect(result.value.length).toBe(2)
@@ -215,7 +216,7 @@ test('I should be able to parsing query condition', () => {
   expect(result.value[1]).toBe('30')
 
   // .$notBetween logic tests
-  result = parser._parseCondition({ "age.$notBetween": '18:30' })
+  result = parser._parseCondition({ 'age.$notBetween': '18:30' })
   expect(result.field).toBe('age')
   expect(result.condition).toBe('NotBetween')
   expect(result.value.length).toBe(2)
@@ -223,19 +224,19 @@ test('I should be able to parsing query condition', () => {
   expect(result.value[1]).toBe('30')
 
   // .$null logic tests
-  result = parser._parseCondition({ "age.$null": null })
+  result = parser._parseCondition({ 'age.$null': null })
   expect(result.field).toBe('age')
   expect(result.condition).toBe('Null')
   expect(result.value).toBe(null)
 
   // .$notNull logic tests
-  result = parser._parseCondition({ "age.$notNull": null })
+  result = parser._parseCondition({ 'age.$notNull': null })
   expect(result.field).toBe('age')
   expect(result.condition).toBe('NotNull')
   expect(result.value).toBe(null)
 
   // .$or logic tests
-  result = parser._parseCondition({ "$or.age.$gt": 18 })
+  result = parser._parseCondition({ '$or.age.$gt': 18 })
   expect(result.prefix).toBe('or')
   expect(result.field).toBe('age')
   expect(result.condition).toBe('>')
@@ -244,7 +245,7 @@ test('I should be able to parsing query condition', () => {
 
 test('I should be able to parsing all conditions', () => {
   const parser = new QueryParser()
-  let result = parser._parseConditions([{ "name": "Özgür" }, { "$or.surname": "Işıklı" }])
+  const result = parser._parseConditions([{ name: 'Özgür' }, { '$or.surname': 'Işıklı' }])
 
   expect(result.length).toBe(2)
   expect(result[0].prefix).toBe(null)
@@ -260,14 +261,14 @@ test('I should be able to parsing all conditions', () => {
 
 test('I should be able to parse recursive queries', () => {
   const parser = new QueryParser()
-  let result = parser._parseConditions([
+  const result = parser._parseConditions([
     [
-      { "name": "Özgür" },
-      { "$or.surname": "Işıklı" }
+      { name: 'Özgür' },
+      { '$or.surname': 'Işıklı' }
     ],
     [
-      { "$or.id.$gt": 1 },
-      { "age.$gt": 18 }
+      { '$or.id.$gt': 1 },
+      { 'age.$gt': 18 }
     ]
   ])
 
@@ -283,9 +284,9 @@ test('I should be able to parse recursive queries', () => {
 
 test('I should be not able to add unacceptable field to query', () => {
   const parser = new QueryParser()
-  expect(() => { parser._parseCondition({ "full-name": "Özgür" }) }).toThrow(Error)
-  expect(() => { parser._parseCondition({ "name$": "Özgür" }) }).toThrow(Error)
-  expect(() => { parser._parseCondition({ "name.": "Özgür" }) }).toThrow(Error)
+  expect(() => { parser._parseCondition({ 'full-name': 'Özgür' }) }).toThrow(Error)
+  expect(() => { parser._parseCondition({ name$: 'Özgür' }) }).toThrow(Error)
+  expect(() => { parser._parseCondition({ 'name.': 'Özgür' }) }).toThrow(Error)
 })
 
 test('I should be able to apply general queries', () => {
@@ -340,7 +341,7 @@ test('I should be able to apply multiple conditions', () => {
   const parser = new QueryParser()
   parser.applyWheres(query, [
     { prefix: null, field: 'name', condition: 'Null', value: null },
-    { prefix: null, field: 'surname', condition: '=', value: 'Işıklı' },
+    { prefix: null, field: 'surname', condition: '=', value: 'Işıklı' }
   ])
 
   expect(query.whereNull.mock.calls.length).toBe(1)
@@ -553,7 +554,7 @@ test('I should be able to apply sorting selection to the query', () => {
   const query = {}
   query.orderBy = jest.fn(() => {})
   const parser = new QueryParser()
-  parser.applySorting(query, [ { field: 'id', type: 'ASC' }])
+  parser.applySorting(query, [{ field: 'id', type: 'ASC' }])
 
   expect(query.orderBy.mock.calls.length).toBe(1)
   expect(query.orderBy.mock.calls[0][0]).toBe('id')

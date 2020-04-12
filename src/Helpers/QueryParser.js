@@ -120,7 +120,7 @@ class QueryParser {
 
     for (const key of Object.keys(query)) {
       if (sections[key] === undefined) {
-        continue;
+        continue
       }
 
       sections[key] = query[key]
@@ -186,7 +186,6 @@ class QueryParser {
     }
 
     const fields = content.split(',')
-    const regex = /^[a-zA-Z_.]+$/
     fields.forEach(field => {
       this._shouldBeAcceptableColumn(field)
     })
@@ -301,7 +300,7 @@ class QueryParser {
       let fields = []
       let children = []
 
-      let columnIndex = relationship.indexOf('{')
+      const columnIndex = relationship.indexOf('{')
       if (columnIndex > -1) {
         fields = this._splitWithRecursive(relationship.substr(columnIndex + 1, relationship.length - columnIndex - 2))
 
@@ -375,7 +374,7 @@ class QueryParser {
     if (field.indexOf(structure) === -1) {
       return false
     }
-    
+
     if (field.indexOf(structure) === field.length - (structure.length)) {
       return true
     }
@@ -392,7 +391,7 @@ class QueryParser {
     if (field.indexOf('.') === 0 || field.indexOf('.') === field.length - 1) {
       throw new Error(`You have to define the column specefically: ${field}`)
     }
-}
+  }
 }
 
 module.exports = QueryParser

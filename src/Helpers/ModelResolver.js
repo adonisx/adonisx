@@ -9,7 +9,7 @@ class ModelResolver {
     for (const file of this.modelLoader.getFiles()) {
       const Model = this.modelLoader.getModel(file)
       const instance = this.modelLoader.getInstance(Model)
-    
+
       const key = file.replace('.js', '')
       const item = {
         model: key,
@@ -17,7 +17,7 @@ class ModelResolver {
         actions: Model.actions,
         relations: []
       }
-    
+
       const methods = this.modelLoader.getModelRelationMethods(instance)
       for (const method of methods) {
         const result = instance[method]()
@@ -25,10 +25,10 @@ class ModelResolver {
         relation.model = result.RelatedModel.name
         item.relations.push(relation)
       }
-    
+
       map.push(item)
     }
-    
+
     return this.treeMapper.create(map)
   }
 }

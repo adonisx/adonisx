@@ -42,4 +42,3 @@ test('Trigger helper should be able to not trigger any method when it does not h
   expect(modelLoader.getContent.mock.calls.length).toBe(0)
   expect(modelLoader.getInstance.mock.calls.length).toBe(0)
 })
-

@@ -51,7 +51,7 @@ class MainRepository {
     // We should trigger onAfterPagination events
     await this.trigger.fire('onAfter', modelPath, 'paginate', { result })
     this.event.fire('onAfterPaginate' + modelPath.replace('App/Models/', ''), { result })
-    
+
     // And this is my function response
     return result
   }

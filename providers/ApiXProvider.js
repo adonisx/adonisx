@@ -1,6 +1,5 @@
 const { ServiceProvider } = use('@adonisjs/fold')
 const { hooks } = use('@adonisjs/ignitor')
-const pluralize = use('pluralize')
 
 class ApiXProvider extends ServiceProvider {
   register () {
@@ -122,7 +121,7 @@ class ApiXProvider extends ServiceProvider {
   _afterProvidersBooted () {
     const ModelResolver = use('APIX/Helpers/ModelResolver')
     const Helpers = use('Helpers')
-  
+
     // We should create all routes by models
     const RouteCreator = require('./../src/Helpers/RouteCreator')
     const creator = new RouteCreator(
@@ -130,7 +129,7 @@ class ApiXProvider extends ServiceProvider {
       use('APIX/Helpers/RouteHelper')
     )
     creator.create(ModelResolver.get())
-    
+
     // Finally we should require the triggers if there is any.
     require(`${Helpers.appRoot()}/start/triggers.js`)
   }

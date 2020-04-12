@@ -15,4 +15,3 @@ test('I should be able to create a XModel instance.', () => {
   const instance = new XModel()
   expect(instance.isExtended()).toBe(true)
 })
-

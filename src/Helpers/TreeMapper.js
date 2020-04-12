@@ -1,7 +1,7 @@
 class TreeMapper {
   create (map) {
     const tree = map
-      .filter(model => 
+      .filter(model =>
         model.relations.length === 0 ||
         model.relations.filter(relation => relation.name !== 'HasOne').length > 0
       )

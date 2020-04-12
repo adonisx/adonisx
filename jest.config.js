@@ -1,5 +1,5 @@
 module.exports = {
-  "globals": {
-    "src": `${__dirname}/src`
+  globals: {
+    src: `${__dirname}/src`
   }
 }

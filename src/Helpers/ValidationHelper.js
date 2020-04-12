@@ -8,7 +8,7 @@ class ValidationHelper {
   }
 
   async validate (inputs, rules) {
-    let validation = await this.validateAll(inputs, rules)
+    const validation = await this.validateAll(inputs, rules)
     if (validation.fails()) {
       throw new ValidationException(validation)
     }
