@@ -10,7 +10,7 @@ You can create a new APIX project structure by using following commands;
 $ yarn global add @adonisjs/cli
 $ adonis new my-api
 $ cd ./my-api
-$ yarn add ozziest/apix mysql
+$ yarn add @ozziest/apix mysql
 ```
 
 Add ApiXProvider to your `app.js` under `start` folder;
@@ -21,7 +21,7 @@ const providers = [
   // ...
   // ...
   '@adonisjs/validator/providers/ValidatorProvider',
-  'apix/providers/ApiXProvider'
+  '@ozziest/apix/providers/ApiXProvider'
 ]
 ```
 
@@ -37,7 +37,7 @@ Then you can edit your `.env` file for database connection like this;
 
 ```
 HOST=localhost
-PORT=4040
+PORT=3333
 NODE_ENV=development
 APP_URL=http://${HOST}:${PORT}
 APP_KEY=this-is-my-secret
