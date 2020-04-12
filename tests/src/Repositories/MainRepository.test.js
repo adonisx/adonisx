@@ -6,7 +6,8 @@ const getDependencies = () => {
     route: {},
     trigger: {},
     repositoryHelper: {},
-    queryParser: {}
+    queryParser: {},
+    event: {}
   }))
 }
 
@@ -16,7 +17,8 @@ const getInstance = (dep) => {
     dep.route,
     dep.trigger,
     dep.repositoryHelper,
-    dep.queryParser
+    dep.queryParser,
+    dep.event
   )
 }
 
@@ -67,6 +69,7 @@ test('I should be able to paginate by route definition.', async () => {
   dep.queryParser.applySorting = jest.fn(() => {})
   dep.queryParser.applyWheres = jest.fn(() => {})
   dep.queryParser.applyRelations = jest.fn(() => {})
+  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.paginate(request, { userId: 1 })
@@ -142,6 +145,7 @@ test('I should be able to get first record by route definition.', async () => {
   dep.queryParser.applySorting = jest.fn(() => {})
   dep.queryParser.applyWheres = jest.fn(() => {})
   dep.queryParser.applyRelations = jest.fn(() => {})
+  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.firstOrFail(request, { userId: 1, id: 2 })
@@ -219,6 +223,7 @@ test('I should be able to get an error while trying to reach unfound record.', a
   dep.queryParser.applySorting = jest.fn(() => {})
   dep.queryParser.applyWheres = jest.fn(() => {})
   dep.queryParser.applyRelations = jest.fn(() => {})
+  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
 
@@ -279,6 +284,8 @@ test('I should be able to create a record by route definition.', async () => {
 
   // Validation mocks
   dep.validation.validate = jest.fn(async () => {})
+
+  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.store(request, { userId: 1 })
@@ -372,6 +379,8 @@ test('I should be able to update a record by route definition.', async () => {
   // Validation mocks
   dep.validation.validate = jest.fn(async () => {})
 
+  dep.event.fire = jest.fn()
+
   const repository = getInstance(dep)
   const result = await repository.update(request, { userId: 1 })
 
@@ -450,6 +459,8 @@ test('I should be able to delete a record by route definition.', async () => {
 
   // Trigger mocks
   dep.trigger.fire = jest.fn(() => {})
+
+  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   await repository.destroy(request, { userId: 1 })

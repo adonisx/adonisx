@@ -230,9 +230,13 @@ class Users extends XModel {
 module.exports = Users
 ```
 
-### 3. Triggers
+### 3. Triggers & Events
 
-You may use **Triggers** in order to add your business logic. To use them, you should use `triggers.js` under **start** folder;
+You may use **Triggers** and **Events** in order to add your business logic. To use them, you should use `triggers.js` or `events.js` under **start** folder. **Events** are actually AdonisJS' features and you can read its documentation in [here](https://adonisjs.com/docs/4.1/events). But also, we added **Triggers** to our structure to have more control over database actions such as get, create, update and delete.
+
+The main difference between **triggers** and **events** is; events are asynchronous. It means that if you are using trigger and handle an the action, HTTP request cycle waits for your responses. But in events, when you handle an action, HTTP requests cycle keeps working and return a responses. So that, if you want to send an e-mail to the user, you should use **events**. On the other hand, if you want to be involved to the query or any business logics in HTTP request cycle, you should use **triggers**.
+
+#### 3.1. Trigger
 
 ```js
 const Trigger = use('Trigger')
@@ -283,6 +287,23 @@ In this structure, you can handle almost every query actions on models. You shou
 | after    | delete      | item                    |
 | after    | paginate    | query                   |
 | after    | firstOrFail | item                    |
+
+#### 3.2. Events
+
+Events have more basic structure. 
+
+| Eventname{Model}       | Variables                    |
+|------------------------|------------------------------|
+| onBeforeCreate{User}   | request, params, data        |
+| onBeforeUpdate{User}   | request, params, item        |
+| onBeforeDelete{User}   | request, params, query       |
+| onBeforePaginate{User} | query                        |
+| onBeforeShow{User}     | query                        |
+| onAfterCreate{User}    | request, params, data, item  |
+| onAfterUpdate{User}    | request, params, item        |
+| onAfterDelete{User}    | item                         |
+| onAfterPaginate{User}  | result                       |
+| onAfterShow{User}      | item                         |
 
 ### 4. Queries
 

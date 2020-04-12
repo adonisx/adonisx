@@ -103,7 +103,8 @@ class ApiXProvider extends ServiceProvider {
         use('Route'),
         use('APIX/Helpers/TriggerHelper'),
         use('APIX/Repositories/RepositoryHelper'),
-        use('APIX/Helpers/QueryParser')
+        use('APIX/Helpers/QueryParser'),
+        use('Event')
       )
     })
   }

@@ -4,12 +4,13 @@ const { capitalCase, snakeCase } = require('change-case')
 const HttpException = require('./../Exceptions/HttpException')
 
 class MainRepository {
-  constructor (validation, route, trigger, repositoryHelper, queryParser) {
+  constructor (validation, route, trigger, repositoryHelper, queryParser, event) {
     this.validation = validation
     this.route = route
     this.trigger = trigger
     this.repositoryHelper = repositoryHelper
     this.queryParser = queryParser
+    this.event = event
   }
 
   async paginate (request, params) {
@@ -36,6 +37,7 @@ class MainRepository {
 
     // We should trigger onBeforePagination events
     await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
+    this.event.fire('onBeforePaginate' + modelPath.replace('App/Models/', ''), { query })
 
     // User should be able to select sorting fields and types
     this.queryParser.applySorting(query, conditions.sort)
@@ -48,6 +50,7 @@ class MainRepository {
 
     // We should trigger onAfterPagination events
     await this.trigger.fire('onAfter', modelPath, 'paginate', { result })
+    this.event.fire('onAfterPaginate' + modelPath.replace('App/Models/', ''), { result })
     
     // And this is my function response
     return result
@@ -80,6 +83,7 @@ class MainRepository {
 
     // We should trigger onBeforeFirstOrFail events
     await this.trigger.fire('onBefore', modelPath, 'firstOrFail', { query })
+    this.event.fire('onBeforeShow' + modelPath.replace('App/Models/', ''), { query })
 
     const item = await this.safe(request, async () => {
       return await query.firstOrFail()
@@ -87,6 +91,7 @@ class MainRepository {
 
     // We should trigger onAfterFirstOrFail events
     await this.trigger.fire('onAfter', modelPath, 'firstOrFail', { item })
+    this.event.fire('onAfterShow' + modelPath.replace('App/Models/', ''), { item })
 
     return item
   }
@@ -107,12 +112,14 @@ class MainRepository {
 
     // We should trigger onBeforeCreate events
     await this.trigger.fire('onBefore', modelPath, 'create', { request, params, data })
+    this.event.fire('onBeforeCreate' + modelPath.replace('App/Models/', ''), { request, params, data })
 
     // Creating the item
     const item = await Model.create(data)
 
     // We should trigger onAfterCreate events
     await this.trigger.fire('onAfter', modelPath, 'create', { request, params, data, item })
+    this.event.fire('onAfterCreate' + modelPath.replace('App/Models/', ''), { request, params, data, item })
 
     // Returning response
     return item
@@ -151,11 +158,13 @@ class MainRepository {
 
     // We should trigger onBeforeUpdate events
     await this.trigger.fire('onBefore', modelPath, 'update', { request, params, item })
+    this.event.fire('onBeforeUpdate' + modelPath.replace('App/Models/', ''), { request, params, item })
 
     await item.save()
 
     // We should trigger onAfterUpdate events
     await this.trigger.fire('onAfter', modelPath, 'update', { request, params, item })
+    this.event.fire('onAfterUpdate' + modelPath.replace('App/Models/', ''), { request, params, item })
 
     // Returning response
     return item
@@ -176,6 +185,7 @@ class MainRepository {
 
     // We should trigger onBeforeDelete events
     await this.trigger.fire('onBefore', modelPath, 'delete', { request, params, query })
+    this.event.fire('onBeforeDelete' + modelPath.replace('App/Models/', ''), { request, params, query })
 
     const item = (await query.firstOrFail()).toJSON()
 
@@ -184,6 +194,7 @@ class MainRepository {
 
     // We should trigger onAfterDelete events
     await this.trigger.fire('onAfter', modelPath, 'delete', { item })
+    this.event.fire('onAfterDelete' + modelPath.replace('App/Models/', ''), { item })
   }
 
   async safe (request, callback) {
