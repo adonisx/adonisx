@@ -1,3 +1,4 @@
+const fs = use('fs')
 const { ServiceProvider } = use('@adonisjs/fold')
 const { hooks } = use('@adonisjs/ignitor')
 
@@ -131,7 +132,10 @@ class ApiXProvider extends ServiceProvider {
     creator.create(ModelResolver.get())
 
     // Finally we should require the triggers if there is any.
-    require(`${Helpers.appRoot()}/start/triggers.js`)
+    const triggerFilePath = `${Helpers.appRoot()}/start/triggers.js`
+    if (fs.existsSync(triggerFilePath)) {
+      require(triggerFilePath)
+    }
   }
 }
 

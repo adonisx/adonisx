@@ -10,7 +10,7 @@ You can create a new APIX project structure by using following commands;
 $ yarn global add @adonisjs/cli
 $ adonis new my-api
 $ cd ./my-api
-$ yarn add ozziest/apix
+$ yarn add ozziest/apix mysql
 ```
 
 Add ApiXProvider to your `app.js` under `start` folder;
@@ -20,8 +20,17 @@ const providers = [
   // ...
   // ...
   // ...
+  '@adonisjs/validator/providers/ValidatorProvider',
   'apix/providers/ApiXProvider'
 ]
+```
+
+Update your `namedMiddleware` object under `start/kernel.js`;
+
+```js
+const namedMiddleware = {
+  idFilter: 'APIX/Middleware/IdFilter'
+}
 ```
 
 Then you can edit your `.env` file for database connection like this;
@@ -93,20 +102,27 @@ class Users extends XModel {
 module.exports = Users
 ```
 
+Create a new controller under `App/Controllers/Http/MainController.js`;
+
+```js
+'use strict'
+
+const XController = use('APIX/Controllers/XController')
+
+class MainController extends XController {
+}
+
+module.exports = MainController
+```
 
 After then, we can execute the application with following command;
 
 ```bash
-$ yarn run serve
+$ yarn run start
 
 yarn run v1.22.4
-nodemon server.js
-[nodemon] 2.0.2
-[nodemon] to restart at any time, enter `rs`
-[nodemon] watching dir(s): *.*
-[nodemon] watching extensions: js,mjs,json
-[nodemon] starting `node server.js`
-info: serving app on http://localhost:4040
+$ node server.js
+info: serving app on http://127.0.0.1:3333
 ```
 
 
