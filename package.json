@@ -1,6 +1,6 @@
 {
   "name": "@ozziest/apix",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fastest way to create simple Rest API by defining database models and their relations.",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,8 @@
     "@adonisjs/fold": "^4.0.9",
     "@adonisjs/ignitor": "^2.0.8",
     "pluralize": "^8.0.0",
-    "change-case": "^4.1.1"
+    "change-case": "^4.1.1",
+    "knex": "^0.20.13"
   },
   "devDependencies": {
     "jest": "^25.2.7",
