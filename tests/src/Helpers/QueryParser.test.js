@@ -568,3 +568,106 @@ test('I should be able to apply see not using order by method when I don`t have 
 
   expect(query.orderBy.mock.calls.length).toBe(0)
 })
+
+test('I should be able to apply single relationship to query', () => {
+  const parser = new QueryParser()
+  const relationships = [
+    {
+      relationship: 'users',
+      fields: [],
+      children: []
+    }
+  ]
+
+  const query = {}
+  query.with = jest.fn(() => {})
+
+  parser.applyRelations(query, relationships)
+  expect(query.with.mock.calls.length).toBe(1)
+  expect(query.with.mock.calls[0][0]).toBe('users')
+})
+
+test('I should be able to apply multiple relationships to query', () => {
+  const parser = new QueryParser()
+  const relationships = [
+    {
+      relationship: 'users',
+      fields: [],
+      children: []
+    },
+    {
+      relationship: 'posts',
+      fields: [],
+      children: []
+    }
+  ]
+
+  const query = {}
+  query.with = jest.fn(() => {})
+
+  parser.applyRelations(query, relationships)
+  expect(query.with.mock.calls.length).toBe(2)
+  expect(query.with.mock.calls[0][0]).toBe('users')
+  expect(query.with.mock.calls[1][0]).toBe('posts')
+})
+
+test('I should be able to apply relationship fields to the query', () => {
+  const parser = new QueryParser()
+  const relationships = [
+    {
+      relationship: 'users',
+      fields: ['id'],
+      children: []
+    }
+  ]
+
+  const subQuery = {}
+  subQuery.select = jest.fn(() => {})
+
+  const query = {}
+  query.with = jest.fn((name, callback) => {
+    callback(subQuery)
+  })
+
+  parser.applyRelations(query, relationships)
+  expect(query.with.mock.calls.length).toBe(1)
+  expect(query.with.mock.calls[0][0]).toBe('users')
+  expect(typeof query.with.mock.calls[0][1]).toBe('function')
+
+  expect(subQuery.select.mock.calls.length).toBe(1)
+  expect(subQuery.select.mock.calls[0][0]).toBe(relationships[0].fields)
+})
+
+test('I should be able to apply relationship with its children to the query', () => {
+  const parser = new QueryParser()
+  const relationships = [
+    {
+      relationship: 'users',
+      fields: [],
+      children: [
+        {
+          relationship: 'posts',
+          fields: ['id', 'title'],
+          children: []
+        }
+      ]
+    }
+  ]
+
+  const query = {}
+  query.with = jest.fn((name, callback) => {
+    callback(query)
+  })
+  query.select = jest.fn(() => {})
+
+  parser.applyRelations(query, relationships)
+  expect(query.with.mock.calls.length).toBe(2)
+  expect(query.with.mock.calls[0][0]).toBe('users')
+  expect(typeof query.with.mock.calls[0][1]).toBe('function')
+
+  expect(query.with.mock.calls[1][0]).toBe('posts')
+  expect(typeof query.with.mock.calls[1][1]).toBe('function')
+
+  expect(query.select.mock.calls.length).toBe(1)
+  expect(query.select.mock.calls[0][0]).toBe(relationships[0].children[0].fields)
+})

@@ -64,6 +64,24 @@ class QueryParser {
     }
   }
 
+  applyRelations (query, relationships) {
+    for (const item of relationships) {
+      if (item.fields.length === 0 && item.children.length === 0) {
+        query.with(item.relationship)
+      } else {
+        query.with(item.relationship, (builder) => {
+          if (item.fields.length > 0) {
+            builder.select(item.fields)
+          }
+
+          if (item.children.length > 0) {
+            this.applyRelations(builder, item.children)
+          }
+        })
+      }
+    }
+  }
+
   get (query) {
     return this._parseSections(
       this._getSections(query)
@@ -285,8 +303,6 @@ class QueryParser {
 
       let columnIndex = relationship.indexOf('{')
       if (columnIndex > -1) {
-        // console.log('relationship', relationship)
-        // console.log('split', relationship.substr(columnIndex + 1, relationship.length - columnIndex - 2))
         fields = this._splitWithRecursive(relationship.substr(columnIndex + 1, relationship.length - columnIndex - 2))
 
         relationship = relationship.substr(0, columnIndex)
