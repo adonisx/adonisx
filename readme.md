@@ -393,3 +393,79 @@ You may use following operators in all of your queries by adding the operator to
 | `$notBetween`   | `{"id.$notBetween": [1, 10]}`  | `id NOT BETWEEN (1, 10)` |
 | `$null`         | `{"id.$null": null}`           | `id IS NULL`             |
 | `$notNull`      | `{"id.$notNull": null}`        | `id IS NOT NULL`         |
+
+#### 4.5. Relationships
+
+In order to get related models in pagination or show methods, you may use following statements;
+
+### 4.5.1. Multiple Relations
+
+```
+/api/users?with=posts,tokens
+```
+
+```json
+{
+  "id": 1,
+  "username": "my-username",
+  "posts": [
+    {
+      "id": 1,
+      "user_id": 1
+    }
+  ],
+  "tokens": [
+    {
+      "id": 1,
+      "user_id": 1
+    }
+  ]
+}
+```
+
+### 4.5.2. Only Dedicated Fields
+
+```
+/api/users?with=posts{id|user_id|title}
+```
+
+```json
+{
+  "id": 1,
+  "username": "my-username",
+  "posts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "title": "Awesome post title"
+    }
+  ]
+}
+```
+
+### 4.5.2. Recursive Relationships
+
+```
+/api/users?with=posts{id|user_id|title|comments{id|post_id|content}}
+```
+
+```json
+{
+  "id": 1,
+  "username": "my-username",
+  "posts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "title": "Awesome post title",
+      "comments": [
+        {
+          "id": 1,
+          "post_id": 1,
+          "content": "Awesome comment on the post"
+        }
+      ]
+    }
+  ]
+}
+```
