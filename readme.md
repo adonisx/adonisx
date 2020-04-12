@@ -398,7 +398,7 @@ You may use following operators in all of your queries by adding the operator to
 
 In order to get related models in pagination or show methods, you may use following statements;
 
-### 4.5.1. Multiple Relations
+##### 4.5.1. Multiple Relations
 
 ```
 /api/users?with=posts,tokens
@@ -423,7 +423,7 @@ In order to get related models in pagination or show methods, you may use follow
 }
 ```
 
-### 4.5.2. Only Dedicated Fields
+##### 4.5.2. Only Dedicated Fields
 
 ```
 /api/users?with=posts{id|user_id|title}
@@ -443,7 +443,7 @@ In order to get related models in pagination or show methods, you may use follow
 }
 ```
 
-### 4.5.2. Recursive Relationships
+##### 4.5.2. Recursive Relationships
 
 ```
 /api/users?with=posts{id|user_id|title|comments{id|post_id|content}}
