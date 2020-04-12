@@ -126,7 +126,7 @@ info: serving app on http://127.0.0.1:3333
 ```
 
 
-Tata! 🎉 With `http://localhost:4040/dev/routes/list` request, you can see all possible routes which you can use. Our API is ready to use now! Come on, test it with your client applications like Postman.
+Tata! 🎉 With `http://localhost:3333/dev/routes/list` request, you can see all possible routes which you can use. Our API is ready to use now! Come on, test it with your client applications like Postman.
 
 ![Tata](docs/images/01.png)
 
