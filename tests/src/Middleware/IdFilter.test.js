@@ -121,6 +121,7 @@ test('I should be able set query results to layers', async () => {
       name: 'Foo'
     }
   })
+  filter._callCustomMiddlewares = jest.fn()
 
   await filter.handle(ctx, next)
 
@@ -133,4 +134,82 @@ test('I should be able set query results to layers', async () => {
 
   expect(ctx.request.apix.layers.user.id).toBe(1)
   expect(ctx.request.apix.layers.user.name).toBe('Foo')
+})
+
+test('I should be able call understand if there is not any middleware on this route', async () => {
+  const ctx = {
+    request: {
+      method () {
+        return 'GET'
+      },
+      apix: {
+        url: '/api/users/:userId/posts'
+      }
+    }
+  }
+  const filter = new IdFilter()
+  expect(filter._hasMiddleware(ctx, 'App/Middleware/CustomMiddleware')).toBe(true)
+  expect(filter._hasMiddleware(ctx, { method: 'GET', middleware: 'App/Middleware/CustomMiddleware' })).toBe(true)
+  expect(filter._hasMiddleware(ctx, { method: 'POST', middleware: 'App/Middleware/CustomMiddleware' })).toBe(false)
+})
+
+test('I should be able to load middleware instance', async () => {
+  const ctx = {
+    request: {
+      method () {
+        return 'GET'
+      },
+      apix: {
+        url: '/api/users/:userId/posts'
+      }
+    }
+  }
+  global.use = jest.fn(() => {
+    return 'MiddlewareInstance'
+  })
+  const filter = new IdFilter()
+  expect(filter._getMiddlewareInstance(ctx, 'App/Middleware/CustomMiddleware')).toBe('MiddlewareInstance')
+  expect(filter._getMiddlewareInstance(ctx, { middleware: 'App/Middleware/CustomMiddleware' })).toBe('MiddlewareInstance')
+})
+
+test('I should be able call custom middlewares', async () => {
+  const ctx = {
+    request: {
+      method () {
+        return 'GET'
+      },
+      apix: {
+        url: '/api/users/:userId/posts'
+      }
+    }
+  }
+  const next = jest.fn(() => {})
+  const routeHelper = {}
+  routeHelper.get = jest.fn(() => {
+    return {
+      middlewares: [
+        'App/Middleware/CustomMiddleware',
+        'App/Middleware/CustomMiddleware',
+        { method: 'GET', middleware: 'App/Middleware/CustomMiddleware' },
+        { method: 'POST', middleware: 'App/Middleware/CustomMiddleware' }
+      ]
+    }
+  })
+
+  let counter = 0
+  class CustomerMiddleware {
+    handle (ctx, next) {
+      counter++
+      next()
+    }
+  }
+
+  global.use = jest.fn(() => {
+    return CustomerMiddleware
+  })
+
+  const filter = new IdFilter(routeHelper)
+  await filter._callCustomMiddlewares(ctx, next)
+
+  expect(counter).toBe(3)
 })

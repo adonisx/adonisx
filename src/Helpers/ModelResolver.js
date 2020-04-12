@@ -15,6 +15,7 @@ class ModelResolver {
         model: key,
         table: Model.table,
         actions: Model.actions,
+        middlewares: Model.middlewares,
         relations: []
       }
 

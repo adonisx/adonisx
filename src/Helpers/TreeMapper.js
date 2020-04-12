@@ -2,8 +2,7 @@ class TreeMapper {
   create (map) {
     const tree = map
       .filter(model =>
-        model.relations.length === 0 ||
-        model.relations.filter(relation => relation.name !== 'HasOne').length > 0
+        model.relations.filter(relation => relation.name === 'HasOne').length === 0
       )
     for (const model of tree) {
       model.children = this._getChildrens(model, map)

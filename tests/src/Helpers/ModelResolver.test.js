@@ -12,6 +12,13 @@ test('Model resolver should resolve all model relations', () => {
   const UserModel = {
     actions: 'ModelActions',
     table: 'users',
+    middlewares: [
+      'App/Middleware/CustomMiddleware',
+      {
+        method: 'GET',
+        middleware: 'App/Middleware/CustomMiddleware'
+      }
+    ],
     userPosts () {
       return {
         $relation: {},
@@ -23,7 +30,8 @@ test('Model resolver should resolve all model relations', () => {
   }
   const UserPostModel = {
     table: 'user_posts',
-    actions: 'ModelActions'
+    actions: 'ModelActions',
+    middlewares: []
   }
 
   modelLoader.getModel = jest.fn()
@@ -73,6 +81,11 @@ test('Model resolver should resolve all model relations', () => {
   expect(map[0].model).toBe('User')
   expect(map[0].table).toBe('users')
   expect(map[0].actions).toBe('ModelActions')
+  expect(map[0].middlewares.length).toBe(2)
+  expect(map[0].middlewares[0]).toBe('App/Middleware/CustomMiddleware')
+  expect(typeof map[0].middlewares[1]).toBe('object')
+  expect(map[0].middlewares[1].method).toBe('GET')
+  expect(map[0].middlewares[1].middleware).toBe('App/Middleware/CustomMiddleware')
   expect(map[0].relations.length).toBe(1)
   expect(map[0].relations[0].model).toBe('UserPost')
 

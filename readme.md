@@ -263,6 +263,31 @@ class Users extends XModel {
 module.exports = Users
 ```
 
+#### 2.4. Custom Middlewares
+
+To add your logics to some routes for some models, you may use following statements in model structure;
+
+```js
+const XModel = use('APIX/Models/XModel')
+
+class Users extends XModel {
+  static get table () {
+    return 'users'
+  }
+
+  static get middlewares () {
+    return [
+      'App/Middleware/CallOnAllRequestsMiddleware',
+      { method: 'GET', middleware: 'App/Middleware/CallOnGETMiddleware' }
+      { method: 'POST', middleware: 'App/Middleware/CallOnPOSTMiddleware' }
+    ]
+  }
+}
+module.exports = Users
+```
+
+With this, you can add an [AdonisJs Middleware](https://adonisjs.com/docs/4.1/middleware) for your model routes.
+
 ### 3. Triggers & Events
 
 You may use **Triggers** and **Events** in order to add your business logic. To use them, you should use `triggers.js` or `events.js` under **start** folder. **Events** are actually AdonisJS' features and you can read its documentation in [here](https://adonisjs.com/docs/4.1/events). But also, we added **Triggers** to our structure to have more control over database actions such as get, create, update and delete.
