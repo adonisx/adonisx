@@ -314,6 +314,11 @@ class QueryParser {
       // Field list shouldn't have any related table
       fields = fields.filter(field => field.indexOf('{') === -1 && field.indexOf('.') === -1)
 
+      // We should validate fields are correct.
+      fields.forEach(field => {
+        this._shouldBeAcceptableColumn(field)
+      })
+
       // We should calculate recursivly all of childre
       children = this._parseWith(children)
 
