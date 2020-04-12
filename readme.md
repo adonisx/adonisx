@@ -7,9 +7,21 @@ APIX is a fastest way to create simple Rest API by defining database models and 
 You can create a new APIX project structure by using following commands;
 
 ```bash
-$ yarn global add nodemon aftershift/apix
-$ apix new api
-$ cd ./api
+$ yarn global add @adonisjs/cli
+$ adonis new my-api
+$ cd ./my-api
+$ yarn add ozziest/apix
+```
+
+Add ApiXProvider to your `app.js` under `start` folder;
+
+```js
+const providers = [
+  // ...
+  // ...
+  // ...
+  'apix/providers/ApiXProvider'
+]
 ```
 
 Then you can edit your `.env` file for database connection like this;

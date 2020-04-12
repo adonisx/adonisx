@@ -1,7 +1,7 @@
 {
   "name": "apix",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Fastest way to create simple Rest API by defining database models and their relations.",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -10,6 +10,14 @@
     "lint": "eslint ."
   },
   "author": "Özgür Adem Işıklı <i.ozguradem@gmail.com>",
+  "homepage": "https://github.com/ozziest/apix#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ozziest/apix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ozziest/apix/issues"
+  },
   "license": "MIT",
   "keywords": [
     "adonis",
