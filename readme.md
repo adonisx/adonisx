@@ -1,8 +1,8 @@
 # APIX
 
-<img alt="Travis (.org)" src="https://img.shields.io/travis/ozziest/apix">
-<img alt="NPM" src="https://img.shields.io/npm/l/@ozziest/apix">
-<img alt="npm (scoped)" src="https://img.shields.io/npm/v/@ozziest/apix">
+[![Travis (.org)](https://img.shields.io/travis/ozziest/apix)](https://img.shields.io/travis/ozziest/apix)
+[![NPM](https://img.shields.io/npm/l/@ozziest/apix)](https://img.shields.io/npm/l/@ozziest/apix)
+[![npm (scoped)](https://img.shields.io/npm/v/@ozziest/apix)](https://img.shields.io/npm/v/@ozziest/apix)
 
 APIX is a fastest way to create simple Rest API by defining database models and their relations. APIX is built on [AdonisJs](https://adonisjs.com/), and it's awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). **But this library is still under development**. 
 
