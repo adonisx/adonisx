@@ -1,5 +1,5 @@
 {
-  "name": "apix",
+  "name": "@ozziest/apix",
   "version": "0.1.0",
   "description": "Fastest way to create simple Rest API by defining database models and their relations.",
   "main": "index.js",
