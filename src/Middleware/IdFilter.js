@@ -33,35 +33,13 @@ class IdFilter {
   }
 
   async _callCustomMiddlewares (ctx) {
-    return new Promise((resolve) => {
-      const Model = this.routeHelper.get(ctx.request.apix.url)
-
-      if (Model.middlewares.length === 0) {
-        return resolve()
+    const Model = this.routeHelper.get(ctx.request.apix.url)
+    for (const middleware of Model.middlewares) {
+      if (this._hasMiddleware(ctx, middleware)) {
+        const MiddlewareClass = this._getMiddlewareInstance(middleware)
+        const instance = new MiddlewareClass()
+        await instance.handle(ctx)
       }
-
-      this.currentMiddlewareIndex = 0
-      this._callNextMidleware(ctx, Model, () => {
-        resolve()
-      })
-    })
-  }
-
-  _callNextMidleware (ctx, Model, next) {
-    if (this.currentMiddlewareIndex >= Model.middlewares.length) {
-      return next()
-    }
-
-    const item = Model.middlewares[this.currentMiddlewareIndex++]
-
-    if (this._hasMiddleware(ctx, item)) {
-      const MiddlewareClass = this._getMiddlewareInstance(item)
-      const instance = new MiddlewareClass()
-      instance.handle(ctx, () => {
-        this._callNextMidleware(ctx, Model, next)
-      })
-    } else {
-      next()
     }
   }
 

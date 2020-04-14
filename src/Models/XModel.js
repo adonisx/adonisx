@@ -8,6 +8,10 @@ class XModel extends Model {
   static get middlewares () {
     return []
   }
+
+  static get validations () {
+    return null
+  }
 }
 
 module.exports = XModel

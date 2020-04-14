@@ -95,7 +95,6 @@ test('I should be able set query results to layers', async () => {
     },
     params: {}
   }
-  const next = jest.fn(() => {})
   const routeHelper = {}
   routeHelper.getMiddlewareModel = jest.fn(() => {
     return {
@@ -123,9 +122,11 @@ test('I should be able set query results to layers', async () => {
   })
   filter._callCustomMiddlewares = jest.fn()
 
+  const next = jest.fn(() => {})
   await filter.handle(ctx, next)
 
   expect(next.mock.calls.length).toBe(1)
+
   expect(filter._setMatchedUrl.mock.calls.length).toBe(1)
   expect(filter._setParentColumns.mock.calls.length).toBe(1)
   expect(filter._getSpecialIdKeys.mock.calls.length).toBe(1)
@@ -183,7 +184,6 @@ test('I should be able call custom middlewares', async () => {
       }
     }
   }
-  const next = jest.fn(() => {})
   const routeHelper = {}
   routeHelper.get = jest.fn(() => {
     return {
@@ -198,9 +198,8 @@ test('I should be able call custom middlewares', async () => {
 
   let counter = 0
   class CustomerMiddleware {
-    handle (ctx, next) {
+    async handle (ctx) {
       counter++
-      next()
     }
   }
 
@@ -209,7 +208,7 @@ test('I should be able call custom middlewares', async () => {
   })
 
   const filter = new IdFilter(routeHelper)
-  await filter._callCustomMiddlewares(ctx, next)
+  await filter._callCustomMiddlewares(ctx)
 
   expect(counter).toBe(3)
 })
