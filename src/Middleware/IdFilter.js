@@ -24,7 +24,6 @@ class IdFilter {
       try {
         ctx.request.apix.layers[pluralize.singular(Middleware.table)] = await this._findOrFail(Model, ctx.params, idKey)
       } catch (error) {
-        console.log(error)
         throw new HttpException(404, `Record not found on ${capitalCase(Middleware.model)}.`)
       }
     }
