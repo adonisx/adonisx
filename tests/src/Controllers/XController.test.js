@@ -1,3 +1,21 @@
+const getCtx = () => {
+  return {
+    request: {},
+    response: {},
+    params: {}
+  }
+}
+
+const getController = () => {
+  const XController = require(`${src}/Controllers/XController`)
+  return new XController()
+}
+
+const verifyJson = (ctx, times, argument) => {
+  expect(ctx.response.json.mock.calls.length).toBe(times)
+  expect(ctx.response.json.mock.calls[0][0]).toBe(argument)
+}
+
 test('I should be able to create a new instance of XController.', () => {
   const repository = {}
 
@@ -5,8 +23,7 @@ test('I should be able to create a new instance of XController.', () => {
     return repository
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
 
   expect(global.use.mock.calls.length).toBe(1)
   expect(global.use.mock.calls[0][0]).toBe('APIX/Repositories/MainRepository')
@@ -15,11 +32,7 @@ test('I should be able to create a new instance of XController.', () => {
 
 test('I should be able to paginate records via index method.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -33,27 +46,20 @@ test('I should be able to paginate records via index method.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.index(ctx)
 
   expect(repository.paginate.mock.calls.length).toBe(1)
   expect(repository.paginate.mock.calls[0][0]).toBe(ctx.request)
   expect(repository.paginate.mock.calls[0][1]).toBe(ctx.params)
 
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('PaginationResult')
-
+  verifyJson(ctx, 1, 'PaginationResult')
   expect(result).toBe('JsonResponse')
 })
 
 test('I should be able to show one record via show method.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -67,27 +73,20 @@ test('I should be able to show one record via show method.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.show(ctx)
 
   expect(repository.firstOrFail.mock.calls.length).toBe(1)
   expect(repository.firstOrFail.mock.calls[0][0]).toBe(ctx.request)
   expect(repository.firstOrFail.mock.calls[0][1]).toBe(ctx.params)
 
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('OneRecord')
-
+  verifyJson(ctx, 1, 'OneRecord')
   expect(result).toBe('JsonResponse')
 })
 
 test('I should be to store a new record.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -101,27 +100,20 @@ test('I should be to store a new record.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.store(ctx)
 
   expect(repository.store.mock.calls.length).toBe(1)
   expect(repository.store.mock.calls[0][0]).toBe(ctx.request)
   expect(repository.store.mock.calls[0][1]).toBe(ctx.params)
 
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('OneRecord')
-
+  verifyJson(ctx, 1, 'OneRecord')
   expect(result).toBe('JsonResponse')
 })
 
 test('I should be to update a record.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -135,27 +127,20 @@ test('I should be to update a record.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.update(ctx)
 
   expect(repository.update.mock.calls.length).toBe(1)
   expect(repository.update.mock.calls[0][0]).toBe(ctx.request)
   expect(repository.update.mock.calls[0][1]).toBe(ctx.params)
 
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('OneRecord')
-
+  verifyJson(ctx, 1, 'OneRecord')
   expect(result).toBe('JsonResponse')
 })
 
 test('I should be to destroy a record.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -169,8 +154,7 @@ test('I should be to destroy a record.', async () => {
     return 'EmptyResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.destroy(ctx)
 
   expect(repository.destroy.mock.calls.length).toBe(1)
@@ -184,11 +168,7 @@ test('I should be to destroy a record.', async () => {
 
 test('I should be to list basic routes.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -202,23 +182,18 @@ test('I should be to list basic routes.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.getBasicRoutes(ctx)
 
   expect(repository.getBasicRoutes.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('RouteList')
+
+  verifyJson(ctx, 1, 'RouteList')
   expect(result).toBe('JsonResponse')
 })
 
 test('I should be to list extended routes.', async () => {
   const repository = {}
-  const ctx = {
-    request: {},
-    response: {},
-    params: {}
-  }
+  const ctx = getCtx()
 
   global.use = jest.fn(() => {
     return repository
@@ -232,12 +207,11 @@ test('I should be to list extended routes.', async () => {
     return 'JsonResponse'
   })
 
-  const XController = require(`${src}/Controllers/XController`)
-  const controller = new XController()
+  const controller = getController()
   const result = await controller.getAllRoutes(ctx)
 
   expect(repository.getAllRoutes.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls.length).toBe(1)
-  expect(ctx.response.json.mock.calls[0][0]).toBe('RouteList')
+
+  verifyJson(ctx, 1, 'RouteList')
   expect(result).toBe('JsonResponse')
 })
