@@ -1,44 +1,64 @@
 const TriggerHelper = require(`${src}/Helpers/TriggerHelper`)
 
-test('Trigger helper should be able to trigger the method when it has been fired', async () => {
-  const modelLoader = {}
-  modelLoader.getContent = jest.fn(() => {
-    return () => {}
-  })
-  let data = {}
-  modelLoader.getInstance = jest.fn(() => {
-    return {
-      async onBeforePaginate (_data) {
-        data = _data
-      }
-    }
-  })
+test('I should be able to define a trigger', async () => {
+  const helper = new TriggerHelper()
 
-  const helper = new TriggerHelper(modelLoader)
-
-  helper
-    .call('App/Triggers/UserTrigger')
-    .before('paginate')
-    .onModel('App/Models/User')
-
-  await helper.fire('onBefore', 'App/Models/User', 'paginate', { userId: 666, name: 'Foo Bar' })
-  expect(modelLoader.getContent.mock.calls.length).toBe(1)
-  expect(modelLoader.getInstance.mock.calls.length).toBe(1)
-  expect(data.userId).toBe(666)
-  expect(data.name).toBe('Foo Bar')
+  helper.on('onAfterDeleteUser', 'UserTrigger.onAfterDeleteUser')
+  expect(typeof helper.map.onAfterDeleteUser).toBe('object')
+  expect(helper.map.onAfterDeleteUser.length).toBe(1)
+  expect(helper.map.onAfterDeleteUser[0]).toBe('UserTrigger.onAfterDeleteUser')
 })
 
-test('Trigger helper should be able to not trigger any method when it does not have any definition', async () => {
+test('I should be able to trigger a defined method', async () => {
+  const instance = {}
+  instance.onAfterDeleteUser = jest.fn()
+  instance.onAfterDeleteUserSecond = jest.fn()
+
   const modelLoader = {}
   modelLoader.getContent = jest.fn(() => {
-    return () => {}
+    return 'MyTriggerFile'
   })
   modelLoader.getInstance = jest.fn(() => {
-    return {}
+    return instance
   })
 
   const helper = new TriggerHelper(modelLoader)
-  await helper.fire('onBefore', 'App/Models/User', 'paginate', { userId: 666, name: 'Foo Bar' })
-  expect(modelLoader.getContent.mock.calls.length).toBe(0)
-  expect(modelLoader.getInstance.mock.calls.length).toBe(0)
+
+  // Defining relationships
+  helper.on('onAfterDeleteUser', 'UserTrigger.onAfterDeleteUser')
+  helper.on('onAfterDeleteUser', 'UserTrigger.onAfterDeleteUserSecond')
+
+  // Fire defined triggers with a custom data
+  const data = { userId: 1 }
+  await helper.fire('onAfterDeleteUser', data)
+
+  // Our trigger instance method should be able to call with custom data
+  expect(instance.onAfterDeleteUser.mock.calls.length).toBe(1)
+  expect(instance.onAfterDeleteUser.mock.calls[0][0]).toBe(data)
+  expect(instance.onAfterDeleteUserSecond.mock.calls.length).toBe(1)
+  expect(instance.onAfterDeleteUserSecond.mock.calls[0][0]).toBe(data)
+})
+
+test('I should be able to get an exception if there is not any method in my trigger implementation', async () => {
+  const instance = {}
+  const modelLoader = {}
+  modelLoader.getContent = jest.fn(() => {
+    return 'MyTriggerFile'
+  })
+  modelLoader.getInstance = jest.fn(() => {
+    return instance
+  })
+
+  const helper = new TriggerHelper(modelLoader)
+
+  // Defining relationships
+  helper.on('onAfterDeleteUser', 'UserTrigger.onAfterDeleteUser')
+
+  // Fire defined triggers with a custom data
+  try {
+    await helper.fire('onAfterDeleteUser', {})
+    expect(true).toBe(false)
+  } catch (err) {
+    expect(err.message).toBe('There is not any onAfterDeleteUser() in UserTrigger')
+  }
 })

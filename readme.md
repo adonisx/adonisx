@@ -299,30 +299,22 @@ The main difference between **triggers** and **events** is; events are asynchron
 ```js
 const Trigger = use('Trigger')
 
-Trigger
-  .call('App/Triggers/UserTrigger')
-  .before('paginate')
-  .after('paginate')
-  .onModel('App/Models/Users')
+Trigger.on('onBeforeCreateUser', 'UserTrigger.onBeforeCreate')
 ```
 
-To define a trigger for a model, you should use this structure. In this structure, there are four methods which you can use;
+To define a trigger for a model, you should use this structure. In this structure, there are two argument which you can use;
 
-- `call`: Which file will be triggerred.
-- `before`, `after`: When the file will be triggered.
-- `onModel`: The source model to catch triggers.
+- `when`: When your method will be triggerred.
+- `method`: Which method will be triggered.
 
-In this example, methods will be triggers in **UserTrigger** file for pagination queries. 
+In this example, methods will be triggers in **UserTrigger** file for before create a new record on `User` model.
 
 This is how `UserTrigger.js` looks under `app` folder;
 
 ```js
 class UserTrigger {
-  onBeforePaginate ({ query }) {
-    query.where('id', '>', 0)
-  }
-
-  onAfterPaginate () {
+  async onBeforeCreate ({ request, params, data }) {
+    // Implement you business logic in here...
   }
 }
 
@@ -331,24 +323,40 @@ module.exports = UserTrigger
 
 In this structure, you can handle almost every query actions on models. You should look at following tables;
 
-| Handler  | Action      | Variables               |
-|----------|-------------|-------------------------|
-| before   | create      | request, params, data   |
-| before   | updateQuery | request, params, query  |
-| before   | update      | request, params, item   |
-| before   | delete      | request, params, query  |
-| before   | paginate    | query                   |
-| before   | firstOrFail | query                   |
-| after    | create      | request, params, data   |
-| after    | updateQuery | request, params, query  |
-| after    | update      | request, params, item   |
-| after    | delete      | item                    |
-| after    | paginate    | query                   |
-| after    | firstOrFail | item                    |
+| Triggername{Model}     | Variables                    |
+|------------------------|------------------------------|
+| onBeforeCreate{User}   | request, params, data        |
+| onBeforeUpdate{User}   | request, params, item        |
+| onBeforeDelete{User}   | request, params, query       |
+| onBeforePaginate{User} | query                        |
+| onBeforeShow{User}     | query                        |
+| onAfterCreate{User}    | request, params, data, item  |
+| onAfterUpdate{User}    | request, params, item        |
+| onAfterDelete{User}    | item                         |
+| onAfterPaginate{User}  | result                       |
+| onAfterShow{User}      | item                         |
 
 #### 3.2. Events
 
-Events have more basic structure. 
+Events have same structure with triggers. In `events.js`, you can define your event like this;
+
+```js
+const Event = use('Event')
+
+Event.on('onAfterCreateUser', 'UserEvent.onAfterCreate')
+```
+
+Then you should crete a file which is called as `UserEvent` under the `app/Events` folder. Catching an event is simple like this;
+
+```js
+class UserEvent {
+  onAfterCreate ({ request, params, data, item }) {
+    // Implement you business logic in here...
+  }
+}
+
+module.exports = UserEvent
+```
 
 | Eventname{Model}       | Variables                    |
 |------------------------|------------------------------|

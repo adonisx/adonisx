@@ -36,8 +36,9 @@ class MainRepository {
     this.queryParser.applyRelations(query, conditions.with)
 
     // We should trigger onBeforePagination events
-    await this.trigger.fire('onBefore', modelPath, 'paginate', { query })
-    this.event.fire('onBeforePaginate' + modelPath.replace('App/Models/', ''), { query })
+    const modelName = modelPath.replace('App/Models/', '')
+    await this.trigger.fire(`onBeforePaginate${modelName}`, { query })
+    this.event.fire(`onBeforePaginate${modelName}`, { query })
 
     // User should be able to select sorting fields and types
     this.queryParser.applySorting(query, conditions.sort)
@@ -49,8 +50,8 @@ class MainRepository {
     )
 
     // We should trigger onAfterPagination events
-    await this.trigger.fire('onAfter', modelPath, 'paginate', { result })
-    this.event.fire('onAfterPaginate' + modelPath.replace('App/Models/', ''), { result })
+    await this.trigger.fire(`onAfterPaginate${modelName}`, { result })
+    this.event.fire(`onAfterPaginate${modelName}`, { result })
 
     // And this is my function response
     return result
@@ -82,16 +83,17 @@ class MainRepository {
     query.where('id', params.id)
 
     // We should trigger onBeforeFirstOrFail events
-    await this.trigger.fire('onBefore', modelPath, 'firstOrFail', { query })
-    this.event.fire('onBeforeShow' + modelPath.replace('App/Models/', ''), { query })
+    const modelName = modelPath.replace('App/Models/', '')
+    await this.trigger.fire(`onBeforeShow${modelName}`, { query })
+    this.event.fire(`onBeforeShow${modelName}`, { query })
 
     const item = await this.safe(request, async () => {
       return await query.firstOrFail()
     })
 
     // We should trigger onAfterFirstOrFail events
-    await this.trigger.fire('onAfter', modelPath, 'firstOrFail', { item })
-    this.event.fire('onAfterShow' + modelPath.replace('App/Models/', ''), { item })
+    await this.trigger.fire(`onAfterShow${modelName}`, { item })
+    this.event.fire(`onAfterShow${modelName}`, { item })
 
     return item
   }
@@ -111,15 +113,16 @@ class MainRepository {
     }
 
     // We should trigger onBeforeCreate events
-    await this.trigger.fire('onBefore', modelPath, 'create', { request, params, data })
-    this.event.fire('onBeforeCreate' + modelPath.replace('App/Models/', ''), { request, params, data })
+    const modelName = modelPath.replace('App/Models/', '')
+    await this.trigger.fire(`onBeforeCreate${modelName}`, { request, params, data })
+    this.event.fire(`onBeforeCreate${modelName}`, { request, params, data })
 
     // Creating the item
     const item = await Model.create(data)
 
     // We should trigger onAfterCreate events
-    await this.trigger.fire('onAfter', modelPath, 'create', { request, params, data, item })
-    this.event.fire('onAfterCreate' + modelPath.replace('App/Models/', ''), { request, params, data, item })
+    await this.trigger.fire(`onAfterCreate${modelName}`, { request, params, data, item })
+    this.event.fire(`onAfterCreate${modelName}`, { request, params, data, item })
 
     // Returning response
     return item
@@ -136,12 +139,13 @@ class MainRepository {
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
     // We should trigger onBeforeUpdateQuery events
-    await this.trigger.fire('onBefore', modelPath, 'updateQuery', { request, params, query })
+    const modelName = modelPath.replace('App/Models/', '')
+    await this.trigger.fire(`onBeforeUpdateQuery${modelName}`, { request, params, query })
 
     const item = await query.firstOrFail()
 
     // We should trigger onAfterUpdateQuery events
-    await this.trigger.fire('onAfter', modelPath, 'updateQuery', { request, params, item })
+    await this.trigger.fire(`onAfterUpdateQuery${modelName}`, { request, params, item })
 
     // Preparing the data
     const data = request.only(Model.fillable)
@@ -157,14 +161,14 @@ class MainRepository {
     await this.validation.validate(item.toJSON(), Model.validations)
 
     // We should trigger onBeforeUpdate events
-    await this.trigger.fire('onBefore', modelPath, 'update', { request, params, item })
-    this.event.fire('onBeforeUpdate' + modelPath.replace('App/Models/', ''), { request, params, item })
+    await this.trigger.fire(`onBeforeUpdate${modelName}`, { request, params, item })
+    this.event.fire(`onBeforeUpdate${modelName}`, { request, params, item })
 
     await item.save()
 
     // We should trigger onAfterUpdate events
-    await this.trigger.fire('onAfter', modelPath, 'update', { request, params, item })
-    this.event.fire('onAfterUpdate' + modelPath.replace('App/Models/', ''), { request, params, item })
+    await this.trigger.fire(`onAfterUpdate${modelName}`, { request, params, item })
+    this.event.fire(`onAfterUpdate${modelName}`, { request, params, item })
 
     // Returning response
     return item
@@ -184,8 +188,9 @@ class MainRepository {
     this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
 
     // We should trigger onBeforeDelete events
-    await this.trigger.fire('onBefore', modelPath, 'delete', { request, params, query })
-    this.event.fire('onBeforeDelete' + modelPath.replace('App/Models/', ''), { request, params, query })
+    const modelName = modelPath.replace('App/Models/', '')
+    await this.trigger.fire(`onBeforeDelete${modelName}`, { request, params, query })
+    this.event.fire(`onBeforeDelete${modelName}`, { request, params, query })
 
     const item = (await query.firstOrFail()).toJSON()
 
@@ -193,8 +198,8 @@ class MainRepository {
     await query.delete()
 
     // We should trigger onAfterDelete events
-    await this.trigger.fire('onAfter', modelPath, 'delete', { item })
-    this.event.fire('onAfterDelete' + modelPath.replace('App/Models/', ''), { item })
+    await this.trigger.fire(`onAfterDelete${modelName}`, { item })
+    this.event.fire(`onAfterDelete${modelName}`, { item })
   }
 
   async safe (request, callback) {
