@@ -1,7 +1,7 @@
 const MainRepository = require(`${src}/Repositories/MainRepository`)
 
 const getDependencies = () => {
-  return JSON.parse(JSON.stringify({
+  const dep = JSON.parse(JSON.stringify({
     validation: {},
     route: {},
     trigger: {},
@@ -9,6 +9,17 @@ const getDependencies = () => {
     queryParser: {},
     event: {}
   }))
+
+  dep.queryParser.applyFields = jest.fn(() => {})
+  dep.queryParser.applySorting = jest.fn(() => {})
+  dep.queryParser.applyWheres = jest.fn(() => {})
+  dep.queryParser.applyRelations = jest.fn(() => {})
+  dep.event.fire = jest.fn()
+  dep.trigger.fire = jest.fn(() => {})
+  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
+  dep.validation.validate = jest.fn(async () => {})
+
+  return dep
 }
 
 const getInstance = (dep) => {
@@ -29,6 +40,18 @@ const getRequest = () => {
       parent_column: 'userId'
     }
   }))
+}
+
+const verifyGetModelPath = (dep, times, argument) => {
+  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(times)
+  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe(argument)
+}
+
+const verifyAddParentIdCondition = (dep, query) => {
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls.length).toBe(1)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][0]).toBe(query)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][1].userId).toBe(1)
+  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][2]).toBe('userId')
 }
 
 test('I should be able to paginate by route definition.', async () => {
@@ -55,8 +78,6 @@ test('I should be able to paginate by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
-  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
-  dep.trigger.fire = jest.fn(() => {})
   dep.queryParser.get = jest.fn(() => {
     return {
       page: 3,
@@ -65,25 +86,16 @@ test('I should be able to paginate by route definition.', async () => {
       sort: null
     }
   })
-  dep.queryParser.applyFields = jest.fn(() => {})
-  dep.queryParser.applySorting = jest.fn(() => {})
-  dep.queryParser.applyWheres = jest.fn(() => {})
-  dep.queryParser.applyRelations = jest.fn(() => {})
-  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.paginate(request, { userId: 1 })
 
-  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts')
+  verifyGetModelPath(dep, 1, 'api/users/1/posts')
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][0]).toBe(query)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][1].userId).toBe(1)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][2]).toBe('userId')
+  verifyAddParentIdCondition(dep, query)
 
   expect(dep.trigger.fire.mock.calls.length).toBe(2)
   expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforePaginateUserPost')
@@ -125,9 +137,6 @@ test('I should be able to get first record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
-  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
-  dep.trigger.fire = jest.fn(() => {})
-
   // Query parser mocks
   dep.queryParser.get = jest.fn(() => {
     return {
@@ -137,25 +146,16 @@ test('I should be able to get first record by route definition.', async () => {
       sort: null
     }
   })
-  dep.queryParser.applyFields = jest.fn(() => {})
-  dep.queryParser.applySorting = jest.fn(() => {})
-  dep.queryParser.applyWheres = jest.fn(() => {})
-  dep.queryParser.applyRelations = jest.fn(() => {})
-  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.firstOrFail(request, { userId: 1, id: 2 })
 
-  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+  verifyGetModelPath(dep, 1, 'api/users/1/posts/2')
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][0]).toBe(query)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][1].userId).toBe(1)
-  expect(dep.repositoryHelper.addParentIdCondition.mock.calls[0][2]).toBe('userId')
+  verifyAddParentIdCondition(dep, query)
 
   expect(dep.trigger.fire.mock.calls.length).toBe(2)
   expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeShowUserPost')
@@ -202,8 +202,6 @@ test('I should be able to get an error while trying to reach unfound record.', a
   dep.repositoryHelper.getModelName = jest.fn(() => {
     return 'UserPost'
   })
-  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
-  dep.trigger.fire = jest.fn(() => {})
 
   dep.queryParser.get = jest.fn(() => {
     return {
@@ -211,11 +209,6 @@ test('I should be able to get an error while trying to reach unfound record.', a
       sort: null
     }
   })
-  dep.queryParser.applyFields = jest.fn(() => {})
-  dep.queryParser.applySorting = jest.fn(() => {})
-  dep.queryParser.applyWheres = jest.fn(() => {})
-  dep.queryParser.applyRelations = jest.fn(() => {})
-  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
 
@@ -270,19 +263,10 @@ test('I should be able to create a record by route definition.', async () => {
     return UserPost
   })
 
-  // Trigger mocks
-  dep.trigger.fire = jest.fn(() => {})
-
-  // Validation mocks
-  dep.validation.validate = jest.fn(async () => {})
-
-  dep.event.fire = jest.fn()
-
   const repository = getInstance(dep)
   const result = await repository.store(request, { userId: 1 })
 
-  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts')
+  verifyGetModelPath(dep, 1, 'api/users/1/posts')
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
@@ -358,21 +342,11 @@ test('I should be able to update a record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
-  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
-
-  // Trigger mocks
-  dep.trigger.fire = jest.fn(() => {})
-
-  // Validation mocks
-  dep.validation.validate = jest.fn(async () => {})
-
-  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.update(request, { userId: 1 })
 
-  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+  verifyGetModelPath(dep, 1, 'api/users/1/posts/2')
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
@@ -436,18 +410,11 @@ test('I should be able to delete a record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
-  dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
-
-  // Trigger mocks
-  dep.trigger.fire = jest.fn(() => {})
-
-  dep.event.fire = jest.fn()
 
   const repository = getInstance(dep)
   await repository.destroy(request, { userId: 1 })
 
-  expect(dep.repositoryHelper.getModelPath.mock.calls.length).toBe(1)
-  expect(dep.repositoryHelper.getModelPath.mock.calls[0][0]).toBe('api/users/1/posts/2')
+  verifyGetModelPath(dep, 1, 'api/users/1/posts/2')
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
