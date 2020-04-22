@@ -288,7 +288,7 @@ module.exports = Users
 
 With this, you can add an [AdonisJs Middleware](https://adonisjs.com/docs/4.1/middleware) for your model routes.
 
-#### 2.5. Custom Middlewares
+#### 2.5. Recursive Resources
 
 Creating a recursive model is very simple with APIX. Just add following relationship structure and it is done! You can use a recursive resource with this way.
 
