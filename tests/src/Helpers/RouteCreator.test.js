@@ -1,16 +1,30 @@
 const RouteCreator = require(`${src}/Helpers/RouteCreator`)
 
-test('I should be able to create all routes by model tree', () => {
+const getRoute = () => {
   const route = {}
   route.get = jest.fn(() => { return route })
   route.post = jest.fn(() => { return route })
   route.put = jest.fn(() => { return route })
   route.delete = jest.fn(() => { return route })
   route.middleware = jest.fn(() => {})
+  return route
+}
 
+const getRouteHelper = () => {
   const routeHelper = {}
   routeHelper.set = jest.fn(() => {})
   routeHelper.setMiddleware = jest.fn(() => {})
+  return routeHelper
+}
+
+const testGet = (route, call, url, method) => {
+  expect(route.get.mock.calls[call][0]).toBe(url)
+  expect(route.get.mock.calls[call][1]).toBe(method)
+}
+
+test('I should be able to create all routes by model tree', () => {
+  const route = getRoute()
+  const routeHelper = getRouteHelper()
 
   const tree = [
     {
@@ -32,23 +46,12 @@ test('I should be able to create all routes by model tree', () => {
   // Validating GET requests
   expect(route.get.mock.calls.length).toBe(6)
 
-  expect(route.get.mock.calls[0][0]).toBe('/api/users')
-  expect(route.get.mock.calls[0][1]).toBe('MainController.index')
-
-  expect(route.get.mock.calls[1][0]).toBe('/api/users/:id')
-  expect(route.get.mock.calls[1][1]).toBe('MainController.show')
-
-  expect(route.get.mock.calls[2][0]).toBe('/api/users/:userId/posts')
-  expect(route.get.mock.calls[2][1]).toBe('MainController.index')
-
-  expect(route.get.mock.calls[3][0]).toBe('/api/users/:userId/posts/:id')
-  expect(route.get.mock.calls[3][1]).toBe('MainController.show')
-
-  expect(route.get.mock.calls[4][0]).toBe('/dev/routes/list')
-  expect(route.get.mock.calls[4][1]).toBe('MainController.getBasicRoutes')
-
-  expect(route.get.mock.calls[5][0]).toBe('/dev/routes/all')
-  expect(route.get.mock.calls[5][1]).toBe('MainController.getAllRoutes')
+  testGet(route, 0, '/api/users', 'MainController.index')
+  testGet(route, 1, '/api/users/:id', 'MainController.show')
+  testGet(route, 2, '/api/users/:userId/posts', 'MainController.index')
+  testGet(route, 3, '/api/users/:userId/posts/:id', 'MainController.show')
+  testGet(route, 4, '/dev/routes/list', 'MainController.getBasicRoutes')
+  testGet(route, 5, '/dev/routes/all', 'MainController.getAllRoutes')
 
   expect(route.post.mock.calls.length).toBe(2)
   expect(route.post.mock.calls[0][0]).toBe('/api/users')
@@ -85,16 +88,8 @@ test('I should be able to create all routes by model tree', () => {
 })
 
 test('I should be able to create recursive routes', () => {
-  const route = {}
-  route.get = jest.fn(() => { return route })
-  route.post = jest.fn(() => { return route })
-  route.put = jest.fn(() => { return route })
-  route.delete = jest.fn(() => { return route })
-  route.middleware = jest.fn(() => {})
-
-  const routeHelper = {}
-  routeHelper.set = jest.fn(() => {})
-  routeHelper.setMiddleware = jest.fn(() => {})
+  const route = getRoute()
+  const routeHelper = getRouteHelper()
 
   const tree = [
     {
@@ -113,17 +108,10 @@ test('I should be able to create recursive routes', () => {
   // Validating GET requests
   expect(route.get.mock.calls.length).toBe(6)
 
-  expect(route.get.mock.calls[0][0]).toBe('/api/categories')
-  expect(route.get.mock.calls[0][1]).toBe('MainController.index')
-
-  expect(route.get.mock.calls[1][0]).toBe('/api/categories/:id')
-  expect(route.get.mock.calls[1][1]).toBe('MainController.show')
-
-  expect(route.get.mock.calls[2][0]).toBe('/api/categories/:categoryId/children')
-  expect(route.get.mock.calls[2][1]).toBe('MainController.index')
-
-  expect(route.get.mock.calls[3][0]).toBe('/api/categories/:categoryId/children/:id')
-  expect(route.get.mock.calls[3][1]).toBe('MainController.show')
+  testGet(route, 0, '/api/categories', 'MainController.index')
+  testGet(route, 1, '/api/categories/:id', 'MainController.show')
+  testGet(route, 2, '/api/categories/:categoryId/children', 'MainController.index')
+  testGet(route, 3, '/api/categories/:categoryId/children/:id', 'MainController.show')
 
   expect(route.post.mock.calls[1][0]).toBe('/api/categories/:categoryId/children')
   expect(route.post.mock.calls[1][1]).toBe('MainController.store')
