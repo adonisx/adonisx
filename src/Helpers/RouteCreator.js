@@ -68,11 +68,6 @@ class RouteCreator {
 
       // It should be recursive
       this._createRoutes(`${parentUrl}${resource}/:${idKey}/children`, model.model, child)
-
-      // const idKey = pluralize.singular(resource) + 'Id'
-      // this.route.get(`/api/${parentUrl}${resource}/:${idKey}/children`, 'MainController.index').middleware('idFilter')
-      // this.routeHelper.set(`/api/${parentUrl}${resource}/:${idKey}/children`, model)
-      // this.routeHelper.setMiddleware(idKey, model)
     }
   }
 }
