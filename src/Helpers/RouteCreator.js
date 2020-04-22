@@ -54,6 +54,26 @@ class RouteCreator {
         this._createRoutes(`${parentUrl}${resource}/:${idKey}/`, model.model, child)
       }
     }
+
+    // If this is a recursive resource, we should add a sub route
+    if (model.is_recursive) {
+      // We should different parameter name for child routes
+      const idKey = pluralize.singular(resource) + 'Id'
+
+      // We should add some dynamic middleware for this id key
+      this.routeHelper.setMiddleware(idKey, model)
+
+      const child = JSON.parse(JSON.stringify(model))
+      child.is_recursive = false
+
+      // It should be recursive
+      this._createRoutes(`${parentUrl}${resource}/:${idKey}/children`, model.model, child)
+
+      // const idKey = pluralize.singular(resource) + 'Id'
+      // this.route.get(`/api/${parentUrl}${resource}/:${idKey}/children`, 'MainController.index').middleware('idFilter')
+      // this.routeHelper.set(`/api/${parentUrl}${resource}/:${idKey}/children`, model)
+      // this.routeHelper.setMiddleware(idKey, model)
+    }
   }
 }
 

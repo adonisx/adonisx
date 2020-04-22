@@ -38,3 +38,28 @@ test('Tree mapper should create a recursive tree by map', () => {
   expect(tree[0].children[0].children.length).toBe(1)
   expect(tree[0].children[0].children[0].model).toBe('PostComment')
 })
+
+test('I should be able to add recursive models', () => {
+  const map = [
+    {
+      model: 'Category',
+      table: 'categories',
+      relations: [
+        {
+          name: 'HasMany',
+          model: 'Category'
+        },
+        {
+          name: 'HasOne',
+          model: 'Category'
+        }
+      ]
+    }
+  ]
+  const mapper = new TreeMapper()
+  const tree = mapper.create(map)
+
+  expect(tree.length).toBe(1)
+  expect(tree[0].model).toBe('Category')
+  expect(tree[0].is_recursive).toBe(true)
+})

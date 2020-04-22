@@ -288,6 +288,47 @@ module.exports = Users
 
 With this, you can add an [AdonisJs Middleware](https://adonisjs.com/docs/4.1/middleware) for your model routes.
 
+#### 2.5. Custom Middlewares
+
+Creating a recursive model is very simple with APIX. Just add following relationship structure and it is done! You can use a recursive resource with this way.
+
+```js
+const XModel = use('APIX/Models/XModel')
+
+class Category extends XModel {
+  static get table () {
+    return 'categories'
+  }
+
+  static get fillable () {
+    return ['title']
+  }
+
+  categories () {
+    return this.hasMany('App/Models/Category')
+  }
+
+  category () {
+    return this.hasOne('App/Models/Category')
+  }
+}
+
+module.exports = Category
+```
+
+When you define a recursive resource like this, you will have following routes to access the resource;
+
+- api/categories [GET]
+- api/categories/:id [GET]
+- api/categories [POST]
+- api/categories/:id [PUT]
+- api/categories/:id [DELETE]
+- api/categories/:categoryId/children [GET]
+- api/categories/:categoryId/children/:id [GET]
+- api/categories/:categoryId/children [POST]
+- api/categories/:categoryId/children/:id [PUT]
+- api/categories/:categoryId/children/:id [DELETE]
+
 ### 3. Triggers & Events
 
 You may use **Triggers** and **Events** in order to add your business logic. To use them, you should use `triggers.js` or `events.js` under **start** folder. **Events** are actually AdonisJS' features and you can read its documentation in [here](https://adonisjs.com/docs/4.1/events). But also, we added **Triggers** to our structure to have more control over database actions such as get, create, update and delete.

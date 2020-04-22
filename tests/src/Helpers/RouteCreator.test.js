@@ -83,3 +83,48 @@ test('I should be able to create all routes by model tree', () => {
   expect(routeHelper.setMiddleware.mock.calls[0][0]).toBe('userId')
   expect(routeHelper.setMiddleware.mock.calls[0][1]).toBe(tree[0])
 })
+
+test('I should be able to create recursive routes', () => {
+  const route = {}
+  route.get = jest.fn(() => { return route })
+  route.post = jest.fn(() => { return route })
+  route.put = jest.fn(() => { return route })
+  route.delete = jest.fn(() => { return route })
+  route.middleware = jest.fn(() => {})
+
+  const routeHelper = {}
+  routeHelper.set = jest.fn(() => {})
+  routeHelper.setMiddleware = jest.fn(() => {})
+
+  const tree = [
+    {
+      is_recursive: true,
+      model: 'Category',
+      table: 'categories',
+      actions: ['GET', 'POST', 'PUT', 'DELETE'],
+      relations: [],
+      children: []
+    }
+  ]
+
+  const creator = new RouteCreator(route, routeHelper)
+  creator.create(tree)
+
+  // Validating GET requests
+  expect(route.get.mock.calls.length).toBe(6)
+
+  expect(route.get.mock.calls[0][0]).toBe('/api/categories')
+  expect(route.get.mock.calls[0][1]).toBe('MainController.index')
+
+  expect(route.get.mock.calls[1][0]).toBe('/api/categories/:id')
+  expect(route.get.mock.calls[1][1]).toBe('MainController.show')
+
+  expect(route.get.mock.calls[2][0]).toBe('/api/categories/:categoryId/children')
+  expect(route.get.mock.calls[2][1]).toBe('MainController.index')
+
+  expect(route.get.mock.calls[3][0]).toBe('/api/categories/:categoryId/children/:id')
+  expect(route.get.mock.calls[3][1]).toBe('MainController.show')
+
+  expect(route.post.mock.calls[1][0]).toBe('/api/categories/:categoryId/children')
+  expect(route.post.mock.calls[1][1]).toBe('MainController.store')
+})

@@ -7,6 +7,24 @@ class TreeMapper {
     for (const model of tree) {
       model.children = this._getChildrens(model, map)
     }
+
+    // We should add recursive models
+    map
+      .filter(model => model.relations.length === 2)
+      .forEach(model => {
+        if (model.relations[0].model && model.relations[1].model) {
+          tree.push({
+            is_recursive: true,
+            model: model.model,
+            table: model.table,
+            actions: model.actions,
+            middlewares: model.middlewares,
+            relations: [],
+            children: []
+          })
+        }
+      })
+
     return tree
   }
 
