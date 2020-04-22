@@ -32,6 +32,7 @@
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/fold": "^4.0.9",
     "@adonisjs/ignitor": "^2.0.8",
+    "@adonisjs/vow": "^1.0.17",
     "pluralize": "^8.0.0",
     "change-case": "^4.1.1",
     "knex": "^0.20.13"

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Missing packages have been added.
+
 ## 0.4.0
 
 - Recursive resource feature has been added.
