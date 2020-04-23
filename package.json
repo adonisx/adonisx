@@ -1,6 +1,6 @@
 {
-  "name": "@ozziest/apix",
-  "version": "0.4.2",
+  "name": "adonisx",
+  "version": "0.1.0",
   "description": "Fastest way to create simple Rest API by defining database models and their relations.",
   "main": "index.js",
   "scripts": {
@@ -10,13 +10,13 @@
     "lint": "eslint ."
   },
   "author": "Özgür Adem Işıklı <i.ozguradem@gmail.com>",
-  "homepage": "https://github.com/ozziest/apix#readme",
+  "homepage": "https://github.com/adonisx/adonisx#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ozziest/apix.git"
+    "url": "git+https://github.com/adonisx/adonisx.git"
   },
   "bugs": {
-    "url": "https://github.com/ozziest/apix/issues"
+    "url": "https://github.com/adonisx/adonisx/issues"
   },
   "license": "MIT",
   "keywords": [
