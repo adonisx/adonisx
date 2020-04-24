@@ -35,7 +35,7 @@ const getInstance = (dep) => {
 
 const getRequest = () => {
   return JSON.parse(JSON.stringify({
-    apix: {
+    adonisx: {
       url: 'api/users/1/posts',
       parent_column: 'userId'
     }
@@ -126,7 +126,7 @@ test('I should be able to get first record by route definition.', async () => {
 
   // Request mock
   const request = getRequest()
-  request.apix.url = 'api/users/1/posts/2'
+  request.adonisx.url = 'api/users/1/posts/2'
   request.all = jest.fn(() => {})
 
   // Constructer mocks
@@ -188,7 +188,7 @@ test('I should be able to get an error while trying to reach unfound record.', a
 
   // Request mock
   const request = getRequest()
-  request.apix.url = 'api/users/1/posts/2'
+  request.adonisx.url = 'api/users/1/posts/2'
   request.all = jest.fn(() => {})
 
   // Constructer mocks
@@ -246,7 +246,7 @@ test('I should be able to create a record by route definition.', async () => {
 
   // Request mock
   const request = getRequest()
-  request.apix.url = 'api/users/1/posts'
+  request.adonisx.url = 'api/users/1/posts'
   request.all = jest.fn(() => {
     return form
   })
@@ -329,7 +329,7 @@ test('I should be able to update a record by route definition.', async () => {
 
   // Request mock
   const request = getRequest()
-  request.apix.url = 'api/users/1/posts/2'
+  request.adonisx.url = 'api/users/1/posts/2'
   request.only = jest.fn(() => {
     return form
   })
@@ -400,7 +400,7 @@ test('I should be able to delete a record by route definition.', async () => {
 
   // Request mock
   const request = getRequest()
-  request.apix.url = 'api/users/1/posts/2'
+  request.adonisx.url = 'api/users/1/posts/2'
 
   // Constructer mocks
   const dep = getDependencies()

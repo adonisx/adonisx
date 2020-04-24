@@ -2,7 +2,7 @@
 
 class XController {
   constructor () {
-    this.repository = use('APIX/Repositories/MainRepository')
+    this.repository = use('AdonisX/Repositories/MainRepository')
   }
 
   async index ({ request, response, params }) {

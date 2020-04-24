@@ -26,7 +26,7 @@ test('I should be able to create a new instance of XController.', () => {
   const controller = getController()
 
   expect(global.use.mock.calls.length).toBe(1)
-  expect(global.use.mock.calls[0][0]).toBe('APIX/Repositories/MainRepository')
+  expect(global.use.mock.calls[0][0]).toBe('AdonisX/Repositories/MainRepository')
   expect(controller.repository).toBe(repository)
 })
 

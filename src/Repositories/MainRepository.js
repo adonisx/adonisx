@@ -18,7 +18,7 @@ class MainRepository {
     const conditions = this.queryParser.get(request.all())
 
     // Loading model
-    const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
+    const modelPath = this.repositoryHelper.getModelPath(request.adonisx.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // Creating a new database query
@@ -27,7 +27,7 @@ class MainRepository {
     // Users should be able to select some fields to show.
     this.queryParser.applyFields(query, conditions.fields)
 
-    this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
+    this.repositoryHelper.addParentIdCondition(query, params, request.adonisx.parent_column)
 
     // Users should be able to filter records
     this.queryParser.applyWheres(query, conditions.q)
@@ -62,7 +62,7 @@ class MainRepository {
     const conditions = this.queryParser.get(request.all())
 
     // Loading model
-    const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
+    const modelPath = this.repositoryHelper.getModelPath(request.adonisx.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // Fetching item
@@ -71,7 +71,7 @@ class MainRepository {
     // Users should be able to select some fields to show.
     this.queryParser.applyFields(query, conditions.fields)
 
-    this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
+    this.repositoryHelper.addParentIdCondition(query, params, request.adonisx.parent_column)
 
     // Users should be able to filter records
     this.queryParser.applyWheres(query, conditions.q)
@@ -100,7 +100,7 @@ class MainRepository {
 
   async store (request, params) {
     // Loading model
-    const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
+    const modelPath = this.repositoryHelper.getModelPath(request.adonisx.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // We should validate the data
@@ -108,8 +108,8 @@ class MainRepository {
     // Preparing the data
     const data = request.only(Model.fillable)
     // Binding parent id if there is.
-    if (request.apix.parent_column) {
-      data[snakeCase(request.apix.parent_column)] = params[request.apix.parent_column]
+    if (request.adonisx.parent_column) {
+      data[snakeCase(request.adonisx.parent_column)] = params[request.adonisx.parent_column]
     }
 
     // We should trigger onBeforeCreate events
@@ -130,13 +130,13 @@ class MainRepository {
 
   async update (request, params) {
     // Loading model
-    const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
+    const modelPath = this.repositoryHelper.getModelPath(request.adonisx.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // Fetching item
     const query = Model.query().where('id', params.id)
 
-    this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
+    this.repositoryHelper.addParentIdCondition(query, params, request.adonisx.parent_column)
 
     // We should trigger onBeforeUpdateQuery events
     const modelName = modelPath.replace('App/Models/', '')
@@ -150,8 +150,8 @@ class MainRepository {
     // Preparing the data
     const data = request.only(Model.fillable)
     // Binding parent id if there is.
-    if (request.apix.parent_column) {
-      data[snakeCase(request.apix.parent_column)] = params[request.apix.parent_column]
+    if (request.adonisx.parent_column) {
+      data[snakeCase(request.adonisx.parent_column)] = params[request.adonisx.parent_column]
     }
 
     // Updating the data
@@ -176,7 +176,7 @@ class MainRepository {
 
   async destroy (request, params) {
     // Loading model
-    const modelPath = this.repositoryHelper.getModelPath(request.apix.url)
+    const modelPath = this.repositoryHelper.getModelPath(request.adonisx.url)
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // Fetching item
@@ -185,7 +185,7 @@ class MainRepository {
       .where('id', params.id)
 
     // Appending parent id condition
-    this.repositoryHelper.addParentIdCondition(query, params, request.apix.parent_column)
+    this.repositoryHelper.addParentIdCondition(query, params, request.adonisx.parent_column)
 
     // We should trigger onBeforeDelete events
     const modelName = modelPath.replace('App/Models/', '')
@@ -206,7 +206,7 @@ class MainRepository {
     try {
       return await callback()
     } catch (error) {
-      const name = this.repositoryHelper.getModelName(request.apix.url)
+      const name = this.repositoryHelper.getModelName(request.adonisx.url)
       throw new HttpException(404, `Record not found on ${capitalCase(name)}.`)
     }
   }

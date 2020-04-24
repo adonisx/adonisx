@@ -14,31 +14,31 @@ test('I should be able to set matched url', async () => {
   filter._setMatchedUrl(request, params)
 
   expect(request.url.mock.calls.length).toBe(1)
-  expect(request.apix.url).toBe('/api/users/:userId/posts')
+  expect(request.adonisx.url).toBe('/api/users/:userId/posts')
 })
 
 test('I should be able to set parent columns', async () => {
   const request = {
-    apix: {
+    adonisx: {
       url: '/api/users/:userId/posts'
     }
   }
 
   const filter = new IdFilter()
   filter._setParentColumns(request)
-  expect(request.apix.parent_column).toBe('userId')
+  expect(request.adonisx.parent_column).toBe('userId')
 })
 
 test('I should be able to set multiple parent columns', async () => {
   const request = {
-    apix: {
+    adonisx: {
       url: '/api/users/:userId/posts/:postId/comments'
     }
   }
 
   const filter = new IdFilter()
   filter._setParentColumns(request)
-  expect(request.apix.parent_column).toBe('postId')
+  expect(request.adonisx.parent_column).toBe('postId')
 })
 
 test('I should be able to get special id keys', async () => {
@@ -88,7 +88,7 @@ test('I should be able execute findOrFail query for model and idKey', async () =
 test('I should be able set query results to layers', async () => {
   const ctx = {
     request: {
-      apix: {
+      adonisx: {
         url: '/api/users/:userId/posts',
         layers: {}
       }
@@ -133,8 +133,8 @@ test('I should be able set query results to layers', async () => {
   expect(filter._loadModel.mock.calls.length).toBe(1)
   expect(filter._findOrFail.mock.calls.length).toBe(1)
 
-  expect(ctx.request.apix.layers.user.id).toBe(1)
-  expect(ctx.request.apix.layers.user.name).toBe('Foo')
+  expect(ctx.request.adonisx.layers.user.id).toBe(1)
+  expect(ctx.request.adonisx.layers.user.name).toBe('Foo')
 })
 
 test('I should be able call understand if there is not any middleware on this route', async () => {
@@ -143,7 +143,7 @@ test('I should be able call understand if there is not any middleware on this ro
       method () {
         return 'GET'
       },
-      apix: {
+      adonisx: {
         url: '/api/users/:userId/posts'
       }
     }
@@ -160,7 +160,7 @@ test('I should be able to load middleware instance', async () => {
       method () {
         return 'GET'
       },
-      apix: {
+      adonisx: {
         url: '/api/users/:userId/posts'
       }
     }
@@ -179,7 +179,7 @@ test('I should be able call custom middlewares', async () => {
       method () {
         return 'GET'
       },
-      apix: {
+      adonisx: {
         url: '/api/users/:userId/posts'
       }
     }

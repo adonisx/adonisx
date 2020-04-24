@@ -1,24 +1,24 @@
-# APIX
+# AdonisX
 
 [![Travis (.org)](https://img.shields.io/travis/ozziest/apix)](https://travis-ci.org/github/ozziest/apix)
 [![NPM](https://img.shields.io/npm/l/@ozziest/apix)](https://www.npmjs.com/package/@ozziest/apix)
 [![npm (scoped)](https://img.shields.io/npm/v/@ozziest/apix)](https://www.npmjs.com/package/@ozziest/apix)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ozziest_apix&metric=alert_status)](https://sonarcloud.io/dashboard?id=ozziest_apix)
 
-APIX is a fastest way to create simple Rest API by defining database models and their relations. APIX is built on [AdonisJs](https://adonisjs.com/), and it's awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). **But this library is still under development**. 
+AdonisX is a fastest way to create simple Rest API by defining database models and their relations. AdonisX is built on [AdonisJs](https://adonisjs.com/), and it's awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). **But this library is still under development**. 
 
 ## Getting Started
 
-You can create a new APIX project structure by using following commands;
+You can create a new AdonisX project structure by using following commands;
 
 ```bash
 $ yarn global add @adonisjs/cli
 $ adonis new my-api
 $ cd ./my-api
-$ yarn add @ozziest/apix mysql
+$ yarn add @ozziest/AdonisX mysql
 ```
 
-Add ApiXProvider to your `app.js` under `start` folder;
+Add AdonisXProvider to your `app.js` under `start` folder;
 
 ```js
 const providers = [
@@ -26,7 +26,7 @@ const providers = [
   // ...
   // ...
   '@adonisjs/validator/providers/ValidatorProvider',
-  '@ozziest/apix/providers/ApiXProvider'
+  '@ozziest/AdonisX/providers/AdonisXProvider'
 ]
 ```
 
@@ -34,7 +34,7 @@ Update your `namedMiddleware` object under `start/kernel.js`;
 
 ```js
 const namedMiddleware = {
-  idFilter: 'APIX/Middleware/IdFilter'
+  idFilter: 'AdonisX/Middleware/IdFilter'
 }
 ```
 
@@ -92,7 +92,7 @@ When we execute `adonis migration:run`, we will have a `users` table on database
 ```js
 'use strict'
 
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -112,7 +112,7 @@ Create a new controller under `App/Controllers/Http/MainController.js`;
 ```js
 'use strict'
 
-const XController = use('APIX/Controllers/XController')
+const XController = use('AdonisX/Controllers/XController')
 
 class MainController extends XController {
 }
@@ -141,13 +141,13 @@ This is an example request to create a new record on database;
 
 ## Philosophy
 
-The aim of the APIX is very simple, creating a simple API server as quick as we can. In order to this, we created a distributed [Service Provider](https://adonisjs.com/docs/4.1/service-providers) for AdonisJs. APIX is the name of this distributed Service Provider.
+The aim of the AdonisX is very simple, creating a simple API server as quick as we can. In order to this, we created a distributed [Service Provider](https://adonisjs.com/docs/4.1/service-providers) for AdonisJs. AdonisX is the name of this distributed Service Provider.
 
-This service provider (APIX) scans your [Lucid](https://adonisjs.com/docs/4.1/lucid#_introduction) models, analyzes all relationships between them, create all REST API routes by [best practices](https://hackernoon.com/restful-api-designing-guidelines-the-best-practices-60e1d954e7c9), and finally, handles all requests and creates responses **automatically**.
+This service provider (AdonisX) scans your [Lucid](https://adonisjs.com/docs/4.1/lucid#_introduction) models, analyzes all relationships between them, create all REST API routes by [best practices](https://hackernoon.com/restful-api-designing-guidelines-the-best-practices-60e1d954e7c9), and finally, handles all requests and creates responses **automatically**.
 
 In the end of the day, with this way, you will not have to write all Rest API codes over and over.
 
-The important point in here, is APIX is designed for simple Rest APIs. But again, it helps to implement you to write your own business logics by giving you some triggers for all key actions. For example, you can create a trigger to be triggerred before for every new insert on a table. In there, you can do whatever you want in it.
+The important point in here, is AdonisX is designed for simple Rest APIs. But again, it helps to implement you to write your own business logics by giving you some triggers for all key actions. For example, you can create a trigger to be triggerred before for every new insert on a table. In there, you can do whatever you want in it.
 
 ## Documentation
 
@@ -183,11 +183,11 @@ The project's directory structure is almost same with AdonisJs;
 
 #### 2.1. Basic Structure
 
-Model definitions should be almost like [Lucid Model](https://adonisjs.com/docs/4.1/lucid). You can use all features of Lucid Models. But to get more, you should extend your model from `APIX/Models/XModel`;
+Model definitions should be almost like [Lucid Model](https://adonisjs.com/docs/4.1/lucid). You can use all features of Lucid Models. But to get more, you should extend your model from `AdonisX/Models/XModel`;
 
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -203,7 +203,7 @@ module.exports = Users
 In order to allow create and update methods, you should define which columns should be editable by users. 
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -222,10 +222,10 @@ In this example, **email**, **name**, **surname** and **age** columns can be edi
 
 #### 2.3. Form Validations
 
-Everybody needs form validation in their API. APIX uses [Indicative](https://indicative-v5.adonisjs.com/) like [AdonisJs](https://adonisjs.com/docs/4.1/validator). The thing you should to define validations, you should add a validations method to your model;
+Everybody needs form validation in their API. AdonisX uses [Indicative](https://indicative-v5.adonisjs.com/) like [AdonisJs](https://adonisjs.com/docs/4.1/validator). The thing you should to define validations, you should add a validations method to your model;
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -249,7 +249,7 @@ module.exports = Users
 Sometimes, you will need to deny some HTTP request for some models. In order to define it, you can add following method to your model. As defaults, all methods are allowed.
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -268,7 +268,7 @@ module.exports = Users
 To add your logics to some routes for some models, you may use following statements in model structure;
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Users extends XModel {
   static get table () {
@@ -290,10 +290,10 @@ With this, you can add an [AdonisJs Middleware](https://adonisjs.com/docs/4.1/mi
 
 #### 2.5. Recursive Resources
 
-Creating a recursive model is very simple with APIX. Just add following relationship structure and it is done! You can use a recursive resource with this way.
+Creating a recursive model is very simple with AdonisX. Just add following relationship structure and it is done! You can use a recursive resource with this way.
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class Category extends XModel {
   static get table () {
@@ -454,7 +454,7 @@ While you are fetching data with pagination, you may send `page` and `per_page` 
 
 #### 4.4. Where Conditions
 
-APIX has several where conditions to use.
+AdonisX has several where conditions to use.
 
 ##### 4.4.1. Simple Query Expression
 

@@ -2,7 +2,7 @@ const fs = use('fs')
 const { ServiceProvider } = use('@adonisjs/fold')
 const { hooks } = use('@adonisjs/ignitor')
 
-class ApiXProvider extends ServiceProvider {
+class AdonisXProvider extends ServiceProvider {
   register () {
     this._bindControllers()
     this._bindExceptions()
@@ -15,18 +15,18 @@ class ApiXProvider extends ServiceProvider {
   }
 
   _bindControllers () {
-    this._bind('APIX/Controllers/XController', '../src/Controllers/XController')
+    this._bind('AdonisX/Controllers/XController', '../src/Controllers/XController')
   }
 
   _bindExceptions () {
-    this._bind('APIX/Exceptions/ApiException', '../src/Exceptions/ApiException')
-    this._bind('APIX/Exceptions/Handler', '../src/Exceptions/Handler')
-    this._bind('APIX/Exceptions/HttpException', '../src/Exceptions/HttpException')
-    this._bind('APIX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
+    this._bind('AdonisX/Exceptions/ApiException', '../src/Exceptions/ApiException')
+    this._bind('AdonisX/Exceptions/Handler', '../src/Exceptions/Handler')
+    this._bind('AdonisX/Exceptions/HttpException', '../src/Exceptions/HttpException')
+    this._bind('AdonisX/Exceptions/ValidationException', '../src/Exceptions/ValidationException')
   }
 
   _bindHelpers () {
-    this.app.bind('APIX/Helpers/ModelLoader', () => {
+    this.app.bind('AdonisX/Helpers/ModelLoader', () => {
       const ModelLoader = require('./../src/Helpers/ModelLoader')
       const Helpers = use('Helpers')
       return new ModelLoader(
@@ -36,37 +36,37 @@ class ApiXProvider extends ServiceProvider {
       )
     })
 
-    this.app.bind('APIX/Helpers/ModelResolver', () => {
+    this.app.bind('AdonisX/Helpers/ModelResolver', () => {
       const ModelResolver = require('./../src/Helpers/ModelResolver')
       return new ModelResolver(
-        use('APIX/Helpers/ModelLoader'),
-        use('APIX/Helpers/TreeMapper')
+        use('AdonisX/Helpers/ModelLoader'),
+        use('AdonisX/Helpers/TreeMapper')
       )
     })
 
-    this.app.bind('APIX/Helpers/QueryParser', () => {
+    this.app.bind('AdonisX/Helpers/QueryParser', () => {
       const QueryParser = require('./../src/Helpers/QueryParser')
       return new QueryParser()
     })
 
-    this.app.singleton('APIX/Helpers/RouteHelper', () => {
+    this.app.singleton('AdonisX/Helpers/RouteHelper', () => {
       const RouteHelper = require('./../src/Helpers/RouteHelper')
       return new RouteHelper()
     })
 
-    this.app.bind('APIX/Helpers/TreeMapper', () => {
+    this.app.bind('AdonisX/Helpers/TreeMapper', () => {
       const TreeMapper = require('./../src/Helpers/TreeMapper')
       return new TreeMapper()
     })
 
-    this.app.singleton('APIX/Helpers/TriggerHelper', () => {
+    this.app.singleton('AdonisX/Helpers/TriggerHelper', () => {
       const TriggerHelper = require('./../src/Helpers/TriggerHelper')
       return new TriggerHelper(
-        use('APIX/Helpers/ModelLoader')
+        use('AdonisX/Helpers/ModelLoader')
       )
     })
 
-    this.app.bind('APIX/Helpers/ValidationHelper', () => {
+    this.app.bind('AdonisX/Helpers/ValidationHelper', () => {
       const ValidationHelper = require('./../src/Helpers/ValidationHelper')
       const { validateAll } = use('Validator')
       return new ValidationHelper(
@@ -76,41 +76,41 @@ class ApiXProvider extends ServiceProvider {
   }
 
   _bindModels () {
-    this._bind('APIX/Models/XModel', '../src/Models/XModel')
+    this._bind('AdonisX/Models/XModel', '../src/Models/XModel')
   }
 
   _bindMiddlewares () {
-    this.app.bind('APIX/Middleware/IdFilter', () => {
+    this.app.bind('AdonisX/Middleware/IdFilter', () => {
       const IdFilter = require('./../src/Middleware/IdFilter')
       return new IdFilter(
-        use('APIX/Helpers/RouteHelper')
+        use('AdonisX/Helpers/RouteHelper')
       )
     })
   }
 
   _bindRepositories () {
-    this.app.bind('APIX/Repositories/RepositoryHelper', () => {
+    this.app.bind('AdonisX/Repositories/RepositoryHelper', () => {
       const RepositoryHelper = require('./../src/Repositories/RepositoryHelper')
       return new RepositoryHelper(
-        use('APIX/Helpers/RouteHelper')
+        use('AdonisX/Helpers/RouteHelper')
       )
     })
 
-    this.app.bind('APIX/Repositories/MainRepository', () => {
+    this.app.bind('AdonisX/Repositories/MainRepository', () => {
       const MainRepository = require('./../src/Repositories/MainRepository')
       return new MainRepository(
-        use('APIX/Helpers/ValidationHelper'),
+        use('AdonisX/Helpers/ValidationHelper'),
         use('Route'),
-        use('APIX/Helpers/TriggerHelper'),
-        use('APIX/Repositories/RepositoryHelper'),
-        use('APIX/Helpers/QueryParser'),
+        use('AdonisX/Helpers/TriggerHelper'),
+        use('AdonisX/Repositories/RepositoryHelper'),
+        use('AdonisX/Helpers/QueryParser'),
         use('Event')
       )
     })
   }
 
   _bindAlias () {
-    this.app.alias('APIX/Helpers/ValidationHelper', 'Validation')
+    this.app.alias('AdonisX/Helpers/ValidationHelper', 'Validation')
   }
 
   _bind (name, path) {
@@ -120,14 +120,14 @@ class ApiXProvider extends ServiceProvider {
   }
 
   _afterProvidersBooted () {
-    const ModelResolver = use('APIX/Helpers/ModelResolver')
+    const ModelResolver = use('AdonisX/Helpers/ModelResolver')
     const Helpers = use('Helpers')
 
     // We should create all routes by models
     const RouteCreator = require('./../src/Helpers/RouteCreator')
     const creator = new RouteCreator(
       use('Route'),
-      use('APIX/Helpers/RouteHelper')
+      use('AdonisX/Helpers/RouteHelper')
     )
     creator.create(ModelResolver.get())
 
@@ -139,4 +139,4 @@ class ApiXProvider extends ServiceProvider {
   }
 }
 
-module.exports = ApiXProvider
+module.exports = AdonisXProvider

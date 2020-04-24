@@ -17,12 +17,12 @@ class IdFilter {
     await this._callCustomMiddlewares(ctx)
 
     // Fetching idKey data automatically
-    for (const idKey of this._getSpecialIdKeys(ctx.request.apix.url)) {
+    for (const idKey of this._getSpecialIdKeys(ctx.request.adonisx.url)) {
       const Middleware = this.routeHelper.getMiddlewareModel(idKey)
       const Model = this._loadModel(Middleware.model)
 
       try {
-        ctx.request.apix.layers[pluralize.singular(Middleware.table)] = await this._findOrFail(Model, ctx.params, idKey)
+        ctx.request.adonisx.layers[pluralize.singular(Middleware.table)] = await this._findOrFail(Model, ctx.params, idKey)
       } catch (error) {
         throw new HttpException(404, `Record not found on ${capitalCase(Middleware.model)}.`)
       }
@@ -32,7 +32,7 @@ class IdFilter {
   }
 
   async _callCustomMiddlewares (ctx) {
-    const Model = this.routeHelper.get(ctx.request.apix.url)
+    const Model = this.routeHelper.get(ctx.request.adonisx.url)
     for (const middleware of Model.middlewares) {
       if (this._hasMiddleware(ctx, middleware)) {
         const MiddlewareClass = this._getMiddlewareInstance(middleware)
@@ -65,19 +65,19 @@ class IdFilter {
     url = url.replace('/:id', '')
 
     // We want to use this data in controller
-    request.apix = {
+    request.adonisx = {
       url,
       layers: {}
     }
   }
 
   _setParentColumns (request) {
-    const sections = request.apix.url
+    const sections = request.adonisx.url
       .replace('/api/', '')
       .split('/')
       .filter(item => item !== ':id' && item.indexOf(':') > -1)
     if (sections.length > 0) {
-      request.apix.parent_column = sections[sections.length - 1].replace(':', '')
+      request.adonisx.parent_column = sections[sections.length - 1].replace(':', '')
     }
   }
 

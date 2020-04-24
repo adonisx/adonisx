@@ -1,7 +1,7 @@
 {
   "name": "adonisx",
-  "version": "0.1.0",
-  "description": "Fastest way to create simple Rest API by defining database models and their relations.",
+  "version": "0.2.0",
+  "description": "Fastest way to create Rest API by defining database models and their relations.",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -21,6 +21,7 @@
   "license": "MIT",
   "keywords": [
     "adonis",
+    "adonisx",
     "api",
     "rest"
   ],
