@@ -1,8 +1,6 @@
 # AdonisX
 
-[![Travis (.org)](https://img.shields.io/travis/ozziest/apix)](https://travis-ci.org/github/ozziest/apix)
-[![NPM](https://img.shields.io/npm/l/@ozziest/apix)](https://www.npmjs.com/package/@ozziest/apix)
-[![npm (scoped)](https://img.shields.io/npm/v/@ozziest/apix)](https://www.npmjs.com/package/@ozziest/apix)
+[![Build Status](https://travis-ci.org/adonisx/adonisx.svg?branch=master)](https://travis-ci.org/adonisx/adonisx)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ozziest_apix&metric=alert_status)](https://sonarcloud.io/dashboard?id=ozziest_apix)
 
 AdonisX is a fastest way to create simple Rest API by defining database models and their relations. AdonisX is built on [AdonisJs](https://adonisjs.com/), and it's awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). **But this library is still under development**. 
