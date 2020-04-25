@@ -34,21 +34,36 @@ You are going to be able to develop an API **10 times faster!**
 
 ## How It Works?
 
-Let's assume that you have a very simple table model like this;
+**AdonisX** uses basic structure of *AdonisJs*. It is actually a [Service Provider](https://adonisjs.com/docs/4.1/service-providers) which works in the initialization proces of an AdonisJs application. It performs two basic functions;
+
+- **Analyzes** your models and their relationships to create routes (*Initialization*)
+- **Handles** all HTTP requests with a shared Controller (*Processing*)
+
+Let's assume that you have a model like this;
 
 ```js
-const XModel = use('APIX/Models/XModel')
+const XModel = use('AdonisX/Models/XModel')
 
 class User extends XModel {
-  static get table () {
-    return 'users'
-  }
-}
 
-module.exports = User
+}
 ```
 
-When you up your application, all of resource routes will be ready to use!
+With this model, you will have all of endpoints for **users** resource. **AdonisX** will create **CRUD** routes for you in the *initialization* and routes will be completely ready to be handled and processed by the shared controller.
+
+If you execute **adonis route:list** command in your terminal, you can see all routes which has been created by **AdonisX**. 
+
+![Adonis Routes](https://adonisx.github.io/images/03-routes.jpg)
+
+All these requests will be handled by **MainController**. **MainController** is a controller which is controlled by **AdonisX**. It *handles* requests for all models. It is responsible to prepare a *response* for the user by model definitions. In model definitions you can decide many things such as *form validation*, *custom middlewares* and *etc*.
+
+When you visit `/api/users` url in your browser, you can see **AdonisX** is responding your request;
+
+![Adonis Routes](https://adonisx.github.io/images/01-paginate.jpg)
+
+With AdonisX, you **don't** have to code for all CRUD actions. You **don't** have to implement advanced query features. The only thing to do is **defining models** and **their relations** between each others. That's all! <Emoji code="1f389"></Emoji>
+
+[Full Documentation](https://adonisx.github.io)
 
 ## Key Features
 
@@ -67,10 +82,11 @@ When you up your application, all of resource routes will be ready to use!
 To clone and run this application, you'll need [Git](https://git-scm.com/), [Node.js](https://nodejs.org) and [nodemon](https://www.npmjs.com/package/nodemon) installed on your computer. From your command line:
 
 ```bash
-$ npm install -g adonisx-cli
+$ npm install -g @adonisjs/cli adonisx-cli
 $ adonisx new
 $ cd adonisx-example
 $ yarn
+$ adonis migration:run
 $ yarn serve
 
 nodemon server.js
