@@ -37,8 +37,8 @@ class MainRepository {
 
     // We should trigger onBeforePagination events
     const modelName = modelPath.replace('App/Models/', '')
-    await this.trigger.fire(`onBeforePaginate${modelName}`, { query })
-    this.event.fire(`onBeforePaginate${modelName}`, { query })
+    await this.trigger.fire(`onBeforePaginate${modelName}`, { request, params, query })
+    this.event.fire(`onBeforePaginate${modelName}`, { request, params, query })
 
     // User should be able to select sorting fields and types
     this.queryParser.applySorting(query, conditions.sort)
@@ -50,8 +50,8 @@ class MainRepository {
     )
 
     // We should trigger onAfterPagination events
-    await this.trigger.fire(`onAfterPaginate${modelName}`, { result })
-    this.event.fire(`onAfterPaginate${modelName}`, { result })
+    await this.trigger.fire(`onAfterPaginate${modelName}`, { request, params, result })
+    this.event.fire(`onAfterPaginate${modelName}`, { request, params, result })
 
     // And this is my function response
     return result
@@ -84,16 +84,16 @@ class MainRepository {
 
     // We should trigger onBeforeFirstOrFail events
     const modelName = modelPath.replace('App/Models/', '')
-    await this.trigger.fire(`onBeforeShow${modelName}`, { query })
-    this.event.fire(`onBeforeShow${modelName}`, { query })
+    await this.trigger.fire(`onBeforeShow${modelName}`, { request, params, query })
+    this.event.fire(`onBeforeShow${modelName}`, { request, params, query })
 
     const item = await this.safe(request, async () => {
       return await query.firstOrFail()
     })
 
     // We should trigger onAfterFirstOrFail events
-    await this.trigger.fire(`onAfterShow${modelName}`, { item })
-    this.event.fire(`onAfterShow${modelName}`, { item })
+    await this.trigger.fire(`onAfterShow${modelName}`, { request, params, item })
+    this.event.fire(`onAfterShow${modelName}`, { request, params, item })
 
     return item
   }
@@ -198,8 +198,8 @@ class MainRepository {
     await query.delete()
 
     // We should trigger onAfterDelete events
-    await this.trigger.fire(`onAfterDelete${modelName}`, { item })
-    this.event.fire(`onAfterDelete${modelName}`, { item })
+    await this.trigger.fire(`onAfterDelete${modelName}`, { request, params, item })
+    this.event.fire(`onAfterDelete${modelName}`, { request, params, item })
   }
 
   async safe (request, callback) {
