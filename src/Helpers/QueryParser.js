@@ -131,7 +131,15 @@ class QueryParser {
 
   _parseSections (sections) {
     if (sections.q) {
-      sections.q = JSON.parse(sections.q)
+      const queryContent = sections.q.replace(/%20/g, '').replace(/ /g,'')
+
+      // Users can send an unacceptable query string. We shouldn't allow them to
+      // send unacceptable structure because of security reasons.
+      try {
+        sections.q = JSON.parse(queryContent)
+      } catch (err) {
+        throw new Error(`Unacceptable query string: \n ${queryContent}`)
+      }
     }
 
     sections.page = this._parsePage(sections.page)
@@ -279,6 +287,10 @@ class QueryParser {
 
     if (where.condition === 'Null' || where.condition === 'NotNull') {
       where.value = null
+    }
+
+    if (where.condition === 'LIKE' || where.condition === 'NOT LIKE') {
+      where.value = where.value.replace(/\*/g, '%')
     }
 
     this._shouldBeAcceptableColumn(where.field)
