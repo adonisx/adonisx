@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Fixed Like queries [#2](https://github.com/adonisx/adonisx/issues/2)
+
 ## 0.2.1
 
 - Fixed namespaces.
