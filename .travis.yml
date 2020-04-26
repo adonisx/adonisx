@@ -4,3 +4,8 @@ node_js:
   - 10
 
 cache: yarn
+
+deploy:
+  provider: npm
+  email: "i.ozguradem@gmail.com"
+  api_key: "$NPM_TOKEN"
