@@ -111,6 +111,7 @@ class AdonisXProvider extends ServiceProvider {
 
   _bindAlias () {
     this.app.alias('AdonisX/Helpers/ValidationHelper', 'Validation')
+    this.app.alias('AdonisX/Helpers/TriggerHelper', 'Trigger')
   }
 
   _bind (name, path) {
