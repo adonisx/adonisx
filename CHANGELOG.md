@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2
+
+- Fixed Like queries [#2](https://github.com/adonisx/adonisx/issues/2)
+- Added missing alias for `TriggerHelper`.
+- Added `request` and `params` objects to trigger and event fire methods as parameters.
+- Fixed recursive model detection bug.
+
 ## 0.2.1
 
 - Fixed namespaces.

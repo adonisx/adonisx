@@ -12,7 +12,7 @@ class TreeMapper {
     map
       .filter(model => model.relations.length === 2)
       .forEach(model => {
-        if (model.relations[0].model && model.relations[1].model) {
+        if (model.relations[0].model === model.relations[1].model) {
           tree.push({
             is_recursive: true,
             model: model.model,

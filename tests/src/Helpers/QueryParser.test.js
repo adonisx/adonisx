@@ -178,13 +178,13 @@ test('I should be able to parsing query condition', () => {
   expect(result.value).toBe(1)
 
   // .$like logic tests
-  result = parser._parseCondition({ 'name.$like': 'John%' })
+  result = parser._parseCondition({ 'name.$like': 'John*' })
   expect(result.field).toBe('name')
   expect(result.condition).toBe('LIKE')
   expect(result.value).toBe('John%')
 
   // .$notLike logic tests
-  result = parser._parseCondition({ 'name.$notLike': 'John%' })
+  result = parser._parseCondition({ 'name.$notLike': 'John*' })
   expect(result.field).toBe('name')
   expect(result.condition).toBe('NOT LIKE')
   expect(result.value).toBe('John%')
@@ -671,4 +671,26 @@ test('I should be able to apply relationship with its children to the query', ()
 
   expect(query.select.mock.calls.length).toBe(1)
   expect(query.select.mock.calls[0][0]).toBe(relationships[0].children[0].fields)
+})
+
+test('I should not be able to send unacceptable query structure', () => {
+  const parser = new QueryParser(options)
+  const sections = {
+    q: 'id',
+    page: null,
+    per_page: null,
+    sort: null,
+    fields: null,
+    with: null
+  }
+  expect(() => { parser._parseSections(sections) }).toThrow()
+})
+
+test('I should be able to see like selector has been replaced', () => {
+  const parser = new QueryParser()
+
+  const result = parser._parseCondition({ 'name.$like': '*John*' })
+  expect(result.field).toBe('name')
+  expect(result.condition).toBe('LIKE')
+  expect(result.value).toBe('%John%')
 })
