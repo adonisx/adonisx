@@ -7,15 +7,27 @@ class ValidationHelper {
     this.validateAll = validateAll
   }
 
-  async validate (inputs, rules) {
-    if (!rules) {
+  async validate (method, inputs, rules) {
+    const activeRules = this.getValidationRules(method, rules)
+    if (!activeRules) {
       return
     }
 
-    const validation = await this.validateAll(inputs, rules)
+    const validation = await this.validateAll(inputs, activeRules)
     if (validation.fails()) {
       throw new ValidationException(validation)
     }
+  }
+
+  getValidationRules (method, rules) {
+    if (this.hasSubRules(rules)) {
+      return rules[method]
+    }
+    return rules
+  }
+
+  hasSubRules (rules) {
+    return Object.keys(rules).some(key => key === 'POST' || key === 'PUT')
   }
 }
 module.exports = ValidationHelper

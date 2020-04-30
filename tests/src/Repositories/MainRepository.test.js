@@ -253,6 +253,9 @@ test('I should be able to create a record by route definition.', async () => {
   request.only = jest.fn(() => {
     return form
   })
+  request.method = jest.fn(() => {
+    return 'POST'
+  })
 
   // Constructer mocks
   const dep = getDependencies()
@@ -272,8 +275,9 @@ test('I should be able to create a record by route definition.', async () => {
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
   expect(dep.validation.validate.mock.calls.length).toBe(1)
-  expect(dep.validation.validate.mock.calls[0][0]).toBe(form)
-  expect(dep.validation.validate.mock.calls[0][1]).toBe('MyValidationRules')
+  expect(dep.validation.validate.mock.calls[0][0]).toBe('POST')
+  expect(dep.validation.validate.mock.calls[0][1]).toBe(form)
+  expect(dep.validation.validate.mock.calls[0][2]).toBe('MyValidationRules')
 
   expect(dep.trigger.fire.mock.calls.length).toBe(2)
   expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeCreateUserPost')
@@ -333,6 +337,9 @@ test('I should be able to update a record by route definition.', async () => {
   request.only = jest.fn(() => {
     return form
   })
+  request.method = jest.fn(() => {
+    return 'PUT'
+  })
 
   // Constructer mocks
   const dep = getDependencies()
@@ -352,8 +359,9 @@ test('I should be able to update a record by route definition.', async () => {
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
   expect(dep.validation.validate.mock.calls.length).toBe(1)
-  expect(dep.validation.validate.mock.calls[0][0]).toBe(item)
-  expect(dep.validation.validate.mock.calls[0][1]).toBe('MyValidationRules')
+  expect(dep.validation.validate.mock.calls[0][0]).toBe('PUT')
+  expect(dep.validation.validate.mock.calls[0][1]).toBe(item)
+  expect(dep.validation.validate.mock.calls[0][2]).toBe('MyValidationRules')
 
   expect(dep.trigger.fire.mock.calls.length).toBe(4)
   expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeUpdateQueryUserPost')

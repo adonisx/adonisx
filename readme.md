@@ -26,6 +26,8 @@
 
 # Overview
 
+> This project is under development and not ready for production.
+
 **AdonisX** is the *fastest* way to create **Rest API** by defining only database models and their relationships between them. It is built on [AdonisJs](https://adonisjs.com), and it's an awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). AdonisX takes AdonisJs' power and speeds it up! It analyzes models and their relationships and creates all Rest API routes automatically.
 
 You are going to be able to develop an API **10 times faster!**

@@ -104,7 +104,7 @@ class MainRepository {
     const Model = this.repositoryHelper.getModel(modelPath)
 
     // We should validate the data
-    await this.validation.validate(request.all(), Model.validations)
+    await this.validation.validate(request.method(), request.all(), Model.validations)
     // Preparing the data
     const data = request.only(Model.fillable)
     // Binding parent id if there is.
@@ -158,7 +158,7 @@ class MainRepository {
     item.merge(data)
 
     // We should validate the data
-    await this.validation.validate(item.toJSON(), Model.validations)
+    await this.validation.validate(request.method(), item.toJSON(), Model.validations)
 
     // We should trigger onBeforeUpdate events
     await this.trigger.fire(`onBeforeUpdate${modelName}`, { request, params, item })
