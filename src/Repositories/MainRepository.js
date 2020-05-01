@@ -106,7 +106,8 @@ class MainRepository {
     // We should validate the data
     await this.validation.validate(request.method(), request.all(), Model.validations)
     // Preparing the data
-    const data = request.only(Model.fillable)
+    const data = request.getFillableFields(Model)
+
     // Binding parent id if there is.
     if (request.adonisx.parent_column) {
       data[snakeCase(request.adonisx.parent_column)] = params[request.adonisx.parent_column]
@@ -148,7 +149,8 @@ class MainRepository {
     await this.trigger.fire(`onAfterUpdateQuery${modelName}`, { request, params, item })
 
     // Preparing the data
-    const data = request.only(Model.fillable)
+    const data = request.getFillableFields(Model)
+
     // Binding parent id if there is.
     if (request.adonisx.parent_column) {
       data[snakeCase(request.adonisx.parent_column)] = params[request.adonisx.parent_column]

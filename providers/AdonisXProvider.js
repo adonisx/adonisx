@@ -137,6 +137,11 @@ class AdonisXProvider extends ServiceProvider {
     if (fs.existsSync(triggerFilePath)) {
       require(triggerFilePath)
     }
+
+    // I should be able to get fillable data from request.
+    const RequestMacros = require('./../src/Macros/RequestMacros')
+    const Request = use('Adonis/Src/Request')
+    Request.macro('getFillableFields', RequestMacros.getFillableFields)
   }
 }
 

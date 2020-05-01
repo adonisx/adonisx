@@ -250,11 +250,11 @@ test('I should be able to create a record by route definition.', async () => {
   request.all = jest.fn(() => {
     return form
   })
-  request.only = jest.fn(() => {
-    return form
-  })
   request.method = jest.fn(() => {
     return 'POST'
+  })
+  request.getFillableFields = jest.fn(() => {
+    return form
   })
 
   // Constructer mocks
@@ -334,11 +334,11 @@ test('I should be able to update a record by route definition.', async () => {
   // Request mock
   const request = getRequest()
   request.adonisx.url = 'api/users/1/posts/2'
-  request.only = jest.fn(() => {
-    return form
-  })
   request.method = jest.fn(() => {
     return 'PUT'
+  })
+  request.getFillableFields = jest.fn(() => {
+    return form
   })
 
   // Constructer mocks
