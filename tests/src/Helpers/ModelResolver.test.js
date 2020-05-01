@@ -2,6 +2,15 @@ const ModelResolver = require(`${src}/Helpers/ModelResolver`)
 test('Model resolver should resolve all model relations', () => {
   const modelLoader = {}
   const treeMapper = {}
+  const actionLoader = {
+    actions: [
+      { file: 'UserActions.js', model: 'User' },
+      { file: 'PostActions.js', model: 'Post' }
+    ],
+    getInstance: jest.fn(() => {
+      return 'Loaded Action'
+    })
+  }
   modelLoader.getFiles = jest.fn(() => {
     return [
       'User.js',
@@ -46,7 +55,7 @@ test('Model resolver should resolve all model relations', () => {
   treeMapper.create = jest.fn()
   treeMapper.create.mockReturnValueOnce('MyTree')
 
-  const resolver = new ModelResolver(modelLoader, treeMapper)
+  const resolver = new ModelResolver(modelLoader, treeMapper, actionLoader)
   resolver.get()
 
   expect(modelLoader.getFiles.mock.calls.length).toBe(1)
@@ -54,6 +63,10 @@ test('Model resolver should resolve all model relations', () => {
   expect(modelLoader.getInstance.mock.calls.length).toBe(2)
   expect(modelLoader.getModelRelationMethods.mock.calls.length).toBe(2)
   expect(treeMapper.create.mock.calls.length).toBe(1)
+
+  // Model resolver load user actions if there is any
+  expect(actionLoader.getInstance.mock.calls.length).toBe(1)
+  expect(actionLoader.getInstance.mock.calls[0][0]).toBe('UserActions.js')
 
   const map = treeMapper.create.mock.calls[0][0]
   /*

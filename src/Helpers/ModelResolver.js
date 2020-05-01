@@ -1,7 +1,8 @@
 class ModelResolver {
-  constructor (modelLoader, treeMapper) {
+  constructor (modelLoader, treeMapper, actionLoader) {
     this.modelLoader = modelLoader
     this.treeMapper = treeMapper
+    this.actionLoader = actionLoader
   }
 
   get () {
@@ -16,7 +17,13 @@ class ModelResolver {
         table: Model.table,
         actions: Model.actions,
         middlewares: Model.middlewares,
-        relations: []
+        relations: [],
+        action: this.actionLoader.actions.find(action => action.model === file.replace('.js', ''))
+      }
+
+      // We should load model actions in initialization process.
+      if (item.action) {
+        item.action = this.actionLoader.getInstance(item.action.file)
       }
 
       const methods = this.modelLoader.getModelRelationMethods(instance)

@@ -54,3 +54,37 @@ test('I should be able to model name.', () => {
   expect(routeHelper.get.mock.calls[0][0]).toBe('api/users')
   expect(name).toBe('User')
 })
+
+test('I should be able to call repository action.', async () => {
+  const routeHelper = {}
+  const action = {
+    onBeforeCreate: jest.fn()
+  }
+  routeHelper.get = jest.fn(() => {
+    return {
+      action
+    }
+  })
+  const helper = new RepositoryHelper(routeHelper)
+  const params = { id: 1 }
+  await helper.callAction('api/users/:id', 'onBeforeCreate', params)
+
+  expect(routeHelper.get.mock.calls.length).toBe(1)
+  expect(action.onBeforeCreate.mock.calls.length).toBe(1)
+  expect(action.onBeforeCreate.mock.calls[0][0]).toBe(params)
+})
+
+test('I should be able to call repository action even there is not any definition.', async () => {
+  const routeHelper = {}
+  const action = {}
+  routeHelper.get = jest.fn(() => {
+    return {
+      action
+    }
+  })
+  const helper = new RepositoryHelper(routeHelper)
+  const params = { id: 1 }
+  await helper.callAction('api/users/:id', 'onBeforeCreate', params)
+
+  expect(routeHelper.get.mock.calls.length).toBe(1)
+})

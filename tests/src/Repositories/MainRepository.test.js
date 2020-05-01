@@ -4,7 +4,6 @@ const getDependencies = () => {
   const dep = JSON.parse(JSON.stringify({
     validation: {},
     route: {},
-    trigger: {},
     repositoryHelper: {},
     queryParser: {},
     event: {}
@@ -15,7 +14,6 @@ const getDependencies = () => {
   dep.queryParser.applyWheres = jest.fn(() => {})
   dep.queryParser.applyRelations = jest.fn(() => {})
   dep.event.fire = jest.fn()
-  dep.trigger.fire = jest.fn(() => {})
   dep.repositoryHelper.addParentIdCondition = jest.fn(() => {})
   dep.validation.validate = jest.fn(async () => {})
 
@@ -26,7 +24,6 @@ const getInstance = (dep) => {
   return new MainRepository(
     dep.validation,
     dep.route,
-    dep.trigger,
     dep.repositoryHelper,
     dep.queryParser,
     dep.event
@@ -78,6 +75,7 @@ test('I should be able to paginate by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
+  dep.repositoryHelper.callAction = jest.fn()
   dep.queryParser.get = jest.fn(() => {
     return {
       page: 3,
@@ -96,13 +94,6 @@ test('I should be able to paginate by route definition.', async () => {
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
   verifyAddParentIdCondition(dep, query)
-
-  expect(dep.trigger.fire.mock.calls.length).toBe(2)
-  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforePaginateUserPost')
-  expect(dep.trigger.fire.mock.calls[0][1].query).toBe(query)
-
-  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfterPaginateUserPost')
-  expect(dep.trigger.fire.mock.calls[1][1].result).toBe('PaginationResult')
 
   expect(query.paginate.mock.calls.length).toBe(1)
   expect(query.paginate.mock.calls[0][0]).toBe(3)
@@ -137,6 +128,7 @@ test('I should be able to get first record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
+  dep.repositoryHelper.callAction = jest.fn()
   // Query parser mocks
   dep.queryParser.get = jest.fn(() => {
     return {
@@ -156,13 +148,6 @@ test('I should be able to get first record by route definition.', async () => {
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
 
   verifyAddParentIdCondition(dep, query)
-
-  expect(dep.trigger.fire.mock.calls.length).toBe(2)
-  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeShowUserPost')
-  expect(dep.trigger.fire.mock.calls[0][1].query).toBe(query)
-
-  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfterShowUserPost')
-  expect(dep.trigger.fire.mock.calls[1][1].item).toBe('FirstOrFailResult')
 
   expect(query.where.mock.calls.length).toBe(1)
   expect(query.where.mock.calls[0][0]).toBe('id')
@@ -202,6 +187,7 @@ test('I should be able to get an error while trying to reach unfound record.', a
   dep.repositoryHelper.getModelName = jest.fn(() => {
     return 'UserPost'
   })
+  dep.repositoryHelper.callAction = jest.fn()
 
   dep.queryParser.get = jest.fn(() => {
     return {
@@ -265,6 +251,7 @@ test('I should be able to create a record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
+  dep.repositoryHelper.callAction = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.store(request, { userId: 1 })
@@ -278,15 +265,6 @@ test('I should be able to create a record by route definition.', async () => {
   expect(dep.validation.validate.mock.calls[0][0]).toBe('POST')
   expect(dep.validation.validate.mock.calls[0][1]).toBe(form)
   expect(dep.validation.validate.mock.calls[0][2]).toBe('MyValidationRules')
-
-  expect(dep.trigger.fire.mock.calls.length).toBe(2)
-  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeCreateUserPost')
-  expect(dep.trigger.fire.mock.calls[0][1].data.title).toBe('Post Title')
-  expect(dep.trigger.fire.mock.calls[0][1].data.description).toBe('Post description in here.')
-  expect(dep.trigger.fire.mock.calls[0][1].data.user_id).toBe(1)
-
-  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfterCreateUserPost')
-  expect(dep.trigger.fire.mock.calls[1][1].item).toBe('CreatedPost')
 
   expect(UserPost.create.mock.calls.length).toBe(1)
 
@@ -349,6 +327,7 @@ test('I should be able to update a record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
+  dep.repositoryHelper.callAction = jest.fn()
 
   const repository = getInstance(dep)
   const result = await repository.update(request, { userId: 1 })
@@ -362,18 +341,6 @@ test('I should be able to update a record by route definition.', async () => {
   expect(dep.validation.validate.mock.calls[0][0]).toBe('PUT')
   expect(dep.validation.validate.mock.calls[0][1]).toBe(item)
   expect(dep.validation.validate.mock.calls[0][2]).toBe('MyValidationRules')
-
-  expect(dep.trigger.fire.mock.calls.length).toBe(4)
-  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeUpdateQueryUserPost')
-
-  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfterUpdateQueryUserPost')
-  expect(dep.trigger.fire.mock.calls[1][1].item.title).toBe('Post Title')
-  expect(dep.trigger.fire.mock.calls[1][1].item.user_id).toBe(1)
-
-  expect(dep.trigger.fire.mock.calls[2][0]).toBe('onBeforeUpdateUserPost')
-  expect(dep.trigger.fire.mock.calls[2][1].item.title).toBe('Post Title')
-  expect(dep.trigger.fire.mock.calls[2][1].item.description).toBe('Updated description')
-  expect(dep.trigger.fire.mock.calls[2][1].item.user_id).toBe(1)
 
   expect(result).toBe(item)
 })
@@ -418,6 +385,7 @@ test('I should be able to delete a record by route definition.', async () => {
   dep.repositoryHelper.getModel = jest.fn(() => {
     return UserPost
   })
+  dep.repositoryHelper.callAction = jest.fn()
 
   const repository = getInstance(dep)
   await repository.destroy(request, { userId: 1 })
@@ -426,13 +394,6 @@ test('I should be able to delete a record by route definition.', async () => {
 
   expect(dep.repositoryHelper.getModel.mock.calls.length).toBe(1)
   expect(dep.repositoryHelper.getModel.mock.calls[0][0]).toBe('App/Models/UserPost')
-
-  expect(dep.trigger.fire.mock.calls.length).toBe(2)
-  expect(dep.trigger.fire.mock.calls[0][0]).toBe('onBeforeDeleteUserPost')
-
-  expect(dep.trigger.fire.mock.calls[1][0]).toBe('onAfterDeleteUserPost')
-  expect(dep.trigger.fire.mock.calls[1][1].item.title).toBe('Post Title')
-  expect(dep.trigger.fire.mock.calls[1][1].item.user_id).toBe(1)
 })
 
 test('I should be able to list all routes with basic style.', async () => {

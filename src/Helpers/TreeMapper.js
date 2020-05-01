@@ -18,6 +18,7 @@ class TreeMapper {
             model: model.model,
             table: model.table,
             actions: model.actions,
+            action: model.action,
             middlewares: model.middlewares,
             relations: [],
             children: []

@@ -36,11 +36,22 @@ class AdonisXProvider extends ServiceProvider {
       )
     })
 
+    this.app.bind('AdonisX/Helpers/ActionLoader', () => {
+      const ActionLoader = require('./../src/Helpers/ActionLoader')
+      const Helpers = use('Helpers')
+      return new ActionLoader(
+        use,
+        use('fs'),
+        `${Helpers.appRoot()}/app/Actions/`
+      )
+    })
+
     this.app.bind('AdonisX/Helpers/ModelResolver', () => {
       const ModelResolver = require('./../src/Helpers/ModelResolver')
       return new ModelResolver(
         use('AdonisX/Helpers/ModelLoader'),
-        use('AdonisX/Helpers/TreeMapper')
+        use('AdonisX/Helpers/TreeMapper'),
+        use('AdonisX/Helpers/ActionLoader')
       )
     })
 
@@ -57,13 +68,6 @@ class AdonisXProvider extends ServiceProvider {
     this.app.bind('AdonisX/Helpers/TreeMapper', () => {
       const TreeMapper = require('./../src/Helpers/TreeMapper')
       return new TreeMapper()
-    })
-
-    this.app.singleton('AdonisX/Helpers/TriggerHelper', () => {
-      const TriggerHelper = require('./../src/Helpers/TriggerHelper')
-      return new TriggerHelper(
-        use('AdonisX/Helpers/ModelLoader')
-      )
     })
 
     this.app.bind('AdonisX/Helpers/ValidationHelper', () => {
@@ -101,7 +105,6 @@ class AdonisXProvider extends ServiceProvider {
       return new MainRepository(
         use('AdonisX/Helpers/ValidationHelper'),
         use('Route'),
-        use('AdonisX/Helpers/TriggerHelper'),
         use('AdonisX/Repositories/RepositoryHelper'),
         use('AdonisX/Helpers/QueryParser'),
         use('Event')
@@ -111,7 +114,6 @@ class AdonisXProvider extends ServiceProvider {
 
   _bindAlias () {
     this.app.alias('AdonisX/Helpers/ValidationHelper', 'Validation')
-    this.app.alias('AdonisX/Helpers/TriggerHelper', 'Trigger')
   }
 
   _bind (name, path) {
@@ -122,7 +124,6 @@ class AdonisXProvider extends ServiceProvider {
 
   _afterProvidersBooted () {
     const ModelResolver = use('AdonisX/Helpers/ModelResolver')
-    const Helpers = use('Helpers')
 
     // We should create all routes by models
     const RouteCreator = require('./../src/Helpers/RouteCreator')
@@ -131,12 +132,6 @@ class AdonisXProvider extends ServiceProvider {
       use('AdonisX/Helpers/RouteHelper')
     )
     creator.create(ModelResolver.get())
-
-    // Finally we should require the triggers if there is any.
-    const triggerFilePath = `${Helpers.appRoot()}/start/triggers.js`
-    if (fs.existsSync(triggerFilePath)) {
-      require(triggerFilePath)
-    }
 
     // I should be able to get fillable data from request.
     const RequestMacros = require('./../src/Macros/RequestMacros')

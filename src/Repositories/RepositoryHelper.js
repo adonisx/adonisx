@@ -21,6 +21,19 @@ class RepositoryHelper {
     return use(path)
   }
 
+  getAction (url) {
+    const route = this.routeHelper.get(url)
+    return route.action
+  }
+
+  async callAction (url, method, params) {
+    const action = this.getAction(url)
+    if (!action || typeof action[method] !== 'function') {
+      return
+    }
+    await action[method](params)
+  }
+
   addParentIdCondition (query, params, parentColumn) {
     // If there is not any parentColumn data, we don't have anything to do.
     if (!parentColumn) {
