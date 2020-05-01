@@ -58,5 +58,5 @@ test('I should be able to see an error when I use wrong method names', () => {
 
 test('I should be able to see an empty array if there is not any fillable method.', () => {
   expect(RequestMacros.getFillableFields({}).length).toBe(0)
-  expect(RequestMacros.only.mock.calls.length).toBe(3)
+  expect(RequestMacros.only.mock.calls.length).toBe(5)
 })

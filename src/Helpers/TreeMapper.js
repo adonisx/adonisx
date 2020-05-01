@@ -36,6 +36,8 @@ class TreeMapper {
 
     const children = JSON.parse(JSON.stringify(map.filter(item => relationNames.indexOf(item.model) > -1)))
     for (const child of children) {
+      // We should carry the instance
+      child.action = map.find(item => item.model === child.model).action
       child.children = this._getChildrens(child, map)
     }
     return children
