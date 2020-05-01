@@ -90,3 +90,8 @@ test('Validation helper should be able to return sub routes if there is any', as
   expect(helper.getValidationRules('PUT', withSubPostRules)).toBe(undefined)
   expect(helper.getValidationRules('POST', withSubWrongRules)).toBe(withSubWrongRules)
 })
+
+test('I should be able to send validation rules as null', async () => {
+  const helper = new ValidationHelper({})
+  await helper.validate('POST', 'inputs', null)
+})

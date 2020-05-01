@@ -8,6 +8,10 @@ class ValidationHelper {
   }
 
   async validate (method, inputs, rules) {
+    if (!rules) {
+      return
+    }
+
     const activeRules = this.getValidationRules(method, rules)
     if (!activeRules) {
       return
