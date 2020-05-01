@@ -21,12 +21,14 @@
 </h1>
 
 <h4 align="center" style="color: #444">
-  Fastest way to create Rest API by defining database models and their relations.
+  The fastest way to create Rest API by defining database models and their relations.
 </h4>
 
 # Overview
 
-**AdonisX** is a *fastest* way to create **Rest API** by defining only database models and their relationships between them. It is built on [AdonisJs](https://adonisjs.com), and it's awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). AdonisX takes AdonisJs' power and speed it up! It analyzes models and their relationships and creates all Rest API routes automatically.
+> This project is under development and not ready for production.
+
+**AdonisX** is the *fastest* way to create **Rest API** by defining only database models and their relationships between them. It is built on [AdonisJs](https://adonisjs.com), and it's an awesome ORM library, [Lucid](https://adonisjs.com/docs/4.1/lucid). AdonisX takes AdonisJs' power and speeds it up! It analyzes models and their relationships and creates all Rest API routes automatically.
 
 You are going to be able to develop an API **10 times faster!**
 
@@ -34,7 +36,7 @@ You are going to be able to develop an API **10 times faster!**
 
 ## How It Works?
 
-**AdonisX** uses basic structure of *AdonisJs*. It is actually a [Service Provider](https://adonisjs.com/docs/4.1/service-providers) which works in the initialization proces of an AdonisJs application. It performs two basic functions;
+**AdonisX** uses the basic structure of *AdonisJs*. It is a [Service Provider](https://adonisjs.com/docs/4.1/service-providers) which works in the initialization process of an AdonisJs application. It performs two basic functions;
 
 - **Analyzes** your models and their relationships to create routes (*Initialization*)
 - **Handles** all HTTP requests with a shared Controller (*Processing*)
@@ -49,19 +51,19 @@ class User extends XModel {
 }
 ```
 
-With this model, you will have all of endpoints for **users** resource. **AdonisX** will create **CRUD** routes for you in the *initialization* and routes will be completely ready to be handled and processed by the shared controller.
+With this model, you will have all of the endpoints for **users** resource. **AdonisX** will create **CRUD** routes for you in the *initialization* and routes will be completely ready to be handled and processed by the shared controller.
 
-If you execute **adonis route:list** command in your terminal, you can see all routes which has been created by **AdonisX**. 
+If you execute **adonis route:list** command in your terminal, you can see all routes which have been created by **AdonisX**. 
 
 ![Adonis Routes](https://adonisx.github.io/images/03-routes.jpg)
 
-All these requests will be handled by **MainController**. **MainController** is a controller which is controlled by **AdonisX**. It *handles* requests for all models. It is responsible to prepare a *response* for the user by model definitions. In model definitions you can decide many things such as *form validation*, *custom middlewares* and *etc*.
+All these requests will be handled by **MainController**. **MainController** is a controller which is controlled by **AdonisX**. It *handles* requests for all models. It is responsible to prepare a *response* for the user by model definitions. In model definitions, you can decide many things such as *form validation*, *custom middlewares* and *, etc*.
 
-When you visit `/api/users` url in your browser, you can see **AdonisX** is responding your request;
+When you visit `/api/users` URL in your browser, you can see **AdonisX** is responding your request;
 
 ![Adonis Routes](https://adonisx.github.io/images/01-paginate.jpg)
 
-With AdonisX, you **don't** have to code for all CRUD actions. You **don't** have to implement advanced query features. The only thing to do is **defining models** and **their relations** between each others. That's all! <Emoji code="1f389"></Emoji>
+With AdonisX, you **don't** have to code for all CRUD actions. You **don't** have to implement advanced query features. The only thing to do is **defining models** and **their relations** between each other. That's all! <Emoji code="1f389"></Emoji>
 
 [Full Documentation](https://adonisx.github.io)
 
@@ -73,7 +75,7 @@ With AdonisX, you **don't** have to code for all CRUD actions. You **don't** hav
 - Middlewares
 - Strong query features
 - Recursive resources
-- Extentable business logic structure
+- The extendable business logic structure
 - Multiple database support (Postgres, MSSQL, MySQL, MariaDB, SQLite3, Oracle, and Amazon Redshift)
 - Well documented
 
@@ -107,7 +109,6 @@ Do you need more? Check the awesome [documentation](https://adonisx.github.io).
 ## Contributing
 
 Please take a look at our [contributing](https://adonisx.github.io/01-introduction/#contribution-guide) guidelines if you're interested in helping!
-
 
 ## License
 

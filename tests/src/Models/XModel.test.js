@@ -12,6 +12,9 @@ test('I should be able to create a XModel instance.', () => {
   expect(XModel.actions.length).toBe(4)
   expect(XModel.actions[0]).toBe('GET')
 
+  expect(XModel.middlewares.length).toBe(0)
+  expect(XModel.validations).toBe(null)
+
   const instance = new XModel()
   expect(instance.isExtended()).toBe(true)
 })
