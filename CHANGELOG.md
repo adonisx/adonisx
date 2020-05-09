@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Added more integration tests to improve stability.
+
 ## 0.3.0
 
 - Trigger feature has been renamed as **Actions** and auto definition structure has been created. ([#8](https://github.com/adonisx/adonisx/issues/8))
