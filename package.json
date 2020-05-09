@@ -1,10 +1,12 @@
 {
   "name": "adonisx",
-  "version": "0.3.0",
-  "description": "Fastest way to create Rest API by defining database models and their relations.",
+  "version": "0.3.1",
+  "description": "The fastest way to create Rest API by defining database models and their relations.",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest",
+    "test:integration": "cd ./tests/integrations && yarn --force && yarn run test",
     "test:dev": "jest --watch",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{js,jsx}",
     "lint": "eslint ."
