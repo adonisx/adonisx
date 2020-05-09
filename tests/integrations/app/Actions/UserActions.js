@@ -8,5 +8,9 @@ module.exports = {
       request.input('password') + data.password_salt
     )
     delete data.password
+  },
+
+  async onBeforePaginate ({ request, params, query }) {
+    query.select(['id', 'name', 'surname', 'created_at', 'updated_at'])
   }
 }

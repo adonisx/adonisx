@@ -19,7 +19,8 @@ class User extends XModel {
       POST: {
         email: 'required|email|max:100',
         name: 'required|max:30',
-        surname: 'required|max:30'
+        surname: 'required|max:30',
+        password: 'required|min:6|max:20'
       },
       PUT: {
         name: 'required|max:30',
@@ -29,7 +30,17 @@ class User extends XModel {
   }
 
   static get actions () {
-    return ['GET', 'POST', 'PUT', 'DELETE']
+    return ['GET', 'POST', 'PUT']
+  }
+
+  static get middlewares () {
+    return [
+      { method: 'GET', middleware: 'App/Middleware/AuthMiddleware' }
+    ]
+  }
+
+  posts () {
+    return this.hasMany('App/Models/Post')
   }
 }
 

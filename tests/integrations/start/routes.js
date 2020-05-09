@@ -13,3 +13,6 @@
 | Route.post('/api/auth/login', 'AuthController.login')
 |
 */
+
+const Route = use('Route')
+Route.post('/api/users/login', 'UserController.login')

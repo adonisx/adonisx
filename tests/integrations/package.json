@@ -8,6 +8,7 @@
     "serve": "nodemon server.js",
     "start": "node server.js",
     "test": "adonis test",
+    "test:full": "yarn --force && adonis test",
     "lint": "eslint ."
   },
   "keywords": [

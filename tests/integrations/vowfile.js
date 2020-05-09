@@ -11,9 +11,14 @@
 */
 
 const ace = require('@adonisjs/ace')
+const fs = require('fs')
 
 module.exports = (cli, runner) => {
   runner.before(async () => {
+    if (fs.existsSync('./database/adonisx.sqlite')) {
+      fs.unlinkSync('./database/adonisx.sqlite')
+    }
+
     // We should sort of the suites by its name. Because we should have
     // a strict ordered suite list. Otherwise, we are trying to logout before
     // logged in.

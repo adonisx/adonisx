@@ -13,6 +13,16 @@ class Post extends XModel {
       content: 'required'
     }
   }
+
+  static get middlewares () {
+    return [
+      'App/Middleware/AuthMiddleware'
+    ]
+  }
+
+  user () {
+    return this.hasOne('App/Models/User', 'user_id', 'id')
+  }
 }
 
 module.exports = Post
