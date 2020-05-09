@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "jest",
-    "test:integration": "cd ./tests/integrations && yarn --force && yarn run test",
+    "test:integration": "cd ./tests/integrations && yarn --force && yarn global add @adonisjs/cli && yarn run test",
     "test:dev": "jest --watch",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{js,jsx}",
     "lint": "eslint ."
