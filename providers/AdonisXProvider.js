@@ -1,4 +1,3 @@
-const fs = use('fs')
 const { ServiceProvider } = use('@adonisjs/fold')
 const { hooks } = use('@adonisjs/ignitor')
 
