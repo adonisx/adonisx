@@ -23,13 +23,13 @@
     "adonisx": "file:./../../"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^7.18.0",
     "sqlite3": "^4.1.1",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^5.0.0"
   },
   "autoload": {
     "App": "./app"
