@@ -131,7 +131,7 @@ class QueryParser {
 
   _parseSections (sections) {
     if (sections.q) {
-      const queryContent = sections.q.replace(/%20/g, '').replace(/ /g,'')
+      const queryContent = sections.q.replace(/%20/g, '').replace(/ /g, '')
 
       // Users can send an unacceptable query string. We shouldn't allow them to
       // send unacceptable structure because of security reasons.
