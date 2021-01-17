@@ -30,6 +30,6 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: yarn publish
-        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
