@@ -2,7 +2,7 @@ name: Npm Realese
 
 on:
   release:
-  types: [published]
+    types: [published]
 
 jobs:
   build:
