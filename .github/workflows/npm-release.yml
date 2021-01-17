@@ -1,8 +1,8 @@
 name: Npm Realese
 
 on:
- release:
- types: [published]
+  release:
+  types: [published]
 
 jobs:
   build:
