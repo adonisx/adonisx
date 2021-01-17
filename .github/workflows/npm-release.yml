@@ -1,12 +1,8 @@
-name: Node.js Package
+name: Npm Realese
 
 on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -30,6 +26,5 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: yarn publish
-        if: github.event.pull_request.merged == true
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
