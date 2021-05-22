@@ -24,6 +24,10 @@
   The fastest way to create Rest API by defining database models and their relations.
 </h4>
 
+# ☢️ IMPORTANT ☢️
+
+Please read the following issue: [The future of AdonisX](https://github.com/adonisx/adonisx/issues/33)
+
 # Overview
 
 > This project is under development and not ready for production.
